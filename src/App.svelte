@@ -10,7 +10,6 @@
 
 <style>
   #app {
-    display: grid;
     color: var(--color-secondary);
   }
 </style>
