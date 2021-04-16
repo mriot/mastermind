@@ -2,6 +2,10 @@
   export let label = "[No Value]";
 </script>
 
+<button>
+  {label}
+</button>
+
 <style>
   button {
     outline: none;
@@ -19,10 +23,6 @@
 
   button:active {
     box-shadow: none;
-	  transform: translate(4px, 4px);
+    transform: translate(4px, 4px);
   }
 </style>
-
-<button>
-  {label}
-</button>

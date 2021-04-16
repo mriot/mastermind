@@ -672,7 +672,6 @@ var app = (function () {
     	let div;
     	let header;
     	let t;
-    	let main;
     	let gameboard;
     	let current;
     	header = new Header({ $$inline: true });
@@ -683,9 +682,7 @@ var app = (function () {
     			div = element("div");
     			create_component(header.$$.fragment);
     			t = space();
-    			main = element("main");
     			create_component(gameboard.$$.fragment);
-    			add_location(main, file, 14, 1, 178);
     			attr_dev(div, "id", "app");
     			attr_dev(div, "class", "svelte-1ibifxi");
     			add_location(div, file, 12, 0, 150);
@@ -697,8 +694,7 @@ var app = (function () {
     			insert_dev(target, div, anchor);
     			mount_component(header, div, null);
     			append_dev(div, t);
-    			append_dev(div, main);
-    			mount_component(gameboard, main, null);
+    			mount_component(gameboard, div, null);
     			current = true;
     		},
     		p: noop,

@@ -1,13 +1,6 @@
 <script>
-import Button from "./common/Button.svelte";
-
+  import Button from "./common/Button.svelte";
 </script>
-
-<style>
-  #gameboard {
-    display: grid;
-  }
-</style>
 
 <div id="gameboard">
   <nav>
@@ -18,6 +11,18 @@ import Button from "./common/Button.svelte";
     <Button label="About" />
   </nav>
   <section>
-    
+    <aside>
+      <!-- lines -->
+    </aside>
+    <main />
+    <aside>
+      <!-- guess info -->
+    </aside>
   </section>
 </div>
+
+<style>
+  #gameboard {
+    display: grid;
+  }
+</style>

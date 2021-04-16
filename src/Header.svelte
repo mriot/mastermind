@@ -1,6 +1,6 @@
 <script>
   let color = "#";
-  
+
   /* setInterval(() => {
 		const chars = "56789ABCD";
     color = "#";
@@ -11,19 +11,9 @@
 	}, 10000); */
 </script>
 
-<style>
-	header {
-		text-align: center;
-	}
-
-  pre {
-    font-size: 10px;
-    transition: color 10s;
-  }
-</style>
-
 <header>
-  <pre style="color: {color};">
+  <pre
+    style="color: {color};">
 &nbsp;███╗   ███╗ █████╗ ███████╗████████╗███████╗██████╗ ███╗   ███╗██╗███╗   ██╗██████╗ 
  ████╗ ████║██╔══██╗██╔════╝╚══██╔══╝██╔════╝██╔══██╗████╗ ████║██║████╗  ██║██╔══██╗
  ██╔████╔██║███████║███████╗   ██║   █████╗  ██████╔╝██╔████╔██║██║██╔██╗ ██║██║  ██║
@@ -32,3 +22,14 @@
 ╚═╝     ╚═╝╚═╝  ╚═╝╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚═╝╚═╝  ╚═══╝╚═════╝                                                                                                                                             
   </pre>
 </header>
+
+<style>
+  header {
+    text-align: center;
+  }
+
+  pre {
+    font-size: 10px;
+    transition: color 10s;
+  }
+</style>
