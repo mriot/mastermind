@@ -1,5 +1,6 @@
 <script>
   import Button from "./common/Button.svelte";
+  import Gamerow from "./Gamerow.svelte";
 </script>
 
 <div id="gameboard">
@@ -11,18 +12,28 @@
     <Button label="About" />
   </nav>
   <section>
-    <aside>
-      <!-- lines -->
-    </aside>
-    <main />
-    <aside>
-      <!-- guess info -->
-    </aside>
+    {#each Array(10) as _, i}
+      <Gamerow lineNumber={i + 1} />
+    {/each}
   </section>
 </div>
 
 <style>
   #gameboard {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    max-width: 80%;
+    margin: 0 auto;
+  }
+
+  nav {
+    display: flex;
+    /* justify-content: center; */
+    gap: 15px;
+    background-color: var(--color-accent-1);
+  }
+
+  section {
+    margin-top: 10px;
   }
 </style>

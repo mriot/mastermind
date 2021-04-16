@@ -11,8 +11,7 @@
     outline: none;
     color: var(--color-secondary);
     font-size: 17px;
-    padding: 10px;
-    margin: 10px auto;
+    padding: 0.75em 2em;
     border: none;
     background-color: var(--color-accent-2);
     cursor: pointer;
