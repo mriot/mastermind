@@ -1,7 +1,7 @@
 <script>
   export let selectedColor;
-  const colorsL = ["red", "green"];
-  const colorsR = ["blue", "yellow"];
+  const colorsL = ["red", "green", "purple"];
+  const colorsR = ["blue", "yellow", "brown"];
 </script>
 
 <div>
