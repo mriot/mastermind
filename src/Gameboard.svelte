@@ -1,6 +1,12 @@
 <script>
   import Button from "./common/Button.svelte";
+  import Game from "./game";
   import Gamerow from "./Gamerow.svelte";
+
+  // DEBUGGING:
+  const game = new Game();
+  game.start();
+  game.validateGuess();
 </script>
 
 <div id="gameboard">
