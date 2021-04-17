@@ -9,7 +9,7 @@ export default class Game {
     for (let i = 0; i < 4; i++) {
       this.CODE.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
     }
-    // this.CODE = [ "blue", "yellow", "brown", "green" ];
+    this.CODE = [ "yellow", "red", "red", "yellow" ];
     console.log("CODE", this.CODE);
   }
 
@@ -32,22 +32,22 @@ export default class Game {
     for (let i = 0; i < 4; i++) {
       guess.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
     }
-    // guess = ["blue", "green", "green", "blue"];
+    // guess = ["red", "green", "green", "red"];
     console.log("GUESS", guess);
     // DEV ==================
 
 
-    const nonMatches = guess.filter((item, index) => item !== this.CODE[index]);
+    const nonMatches = guess.filter((color, index) => color !== this.CODE[index]);
     const matches = this.CODE.length - nonMatches.length;
     console.log("matches", matches);
 
-    const gudColors = [
-      ...new Set(
-        this.CODE.filter((item, index) => {
-          return nonMatches.includes(item) && item !== guess[index];
-        })
-      ),
-    ];
+    // const gudColors = this.CODE.filter((color, index) => {
+    //   return nonMatches.includes(color) && color !== guess[index];
+    // });
+    
+    const gudColors = nonMatches.filter((color, index) => {
+      return this.CODE.includes(color)/* && color !== this.CODE[index]*/;
+    });
     console.log("gudColors", gudColors);
 
     
