@@ -6,10 +6,10 @@ export default class Game {
 
   start() {
     // start a game session
-    // for (let i = 0; i < 4; i++) {
-    //   this.CODE.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
-    // }
-    this.CODE = ["red", "green", "purple", "brown"];
+    for (let i = 0; i < 4; i++) {
+      this.CODE.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
+    }
+    // this.CODE = [ "blue", "yellow", "brown", "green" ];
     console.log("CODE", this.CODE);
   }
 
@@ -27,38 +27,30 @@ export default class Game {
    * @param {ARRAY} guess 
    */
   validateGuess(guess) {
-    // guess = ["red", "green", "purple", "brown"];
-    guess = ["red", "green", "brown", "red"];
+    // DEV ==================
+    guess = [];
+    for (let i = 0; i < 4; i++) {
+      guess.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
+    }
+    // guess = ["blue", "green", "green", "blue"];
     console.log("GUESS", guess);
+    // DEV ==================
 
-    // const result = guess.every((value, index) => value === this.CODE[index]);
-    // console.log("guess match:", result);
 
-    // TODO count correct colors (regardless of slot)
-    const rightColors = guess.reduce((prev, value, index) => {
-      // BUG: counts same color multiple times
-      if (this.CODE.includes(value)) {
-        console.log(value);
-        prev++;
-      }
-      return prev;
-    }, 0);
+    const nonMatches = guess.filter((item, index) => item !== this.CODE[index]);
+    const matches = this.CODE.length - nonMatches.length;
+    console.log("matches", matches);
 
-    console.log("rightColors", rightColors);
+    const gudColors = [
+      ...new Set(
+        this.CODE.filter((item, index) => {
+          return nonMatches.includes(item) && item !== guess[index];
+        })
+      ),
+    ];
+    console.log("gudColors", gudColors);
 
-    // count correct colors + slots
-    const rightGuesses = guess.reduce((prev, value, index) => {
-      if (value === this.CODE[index]) {
-        prev++;
-      }
-      return prev;
-    }, 0);
-
-    console.log("rightGuesses", rightGuesses);
-
-    // return 
-    return rightGuesses < 4 ? rightGuesses : true;
+    
+    return [matches, gudColors.length];
   }
-
-
 }
