@@ -8,8 +8,6 @@
     <Button label="Pause" />
     <Button label="Reset" />
     <Button label="Rules" />
-    <Button label="Highscore" />
-    <Button label="About" />
   </nav>
   <section>
     {#each Array(10) as _, i}
