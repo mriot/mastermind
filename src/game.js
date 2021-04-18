@@ -9,7 +9,7 @@ export default class Game {
     for (let i = 0; i < 4; i++) {
       this.CODE.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
     }
-    this.CODE = [ "yellow", "red", "red", "yellow" ];
+    // this.CODE = [ "green", "blue", "blue", "yellow" ];
     console.log("CODE", this.CODE);
   }
 
@@ -32,25 +32,142 @@ export default class Game {
     for (let i = 0; i < 4; i++) {
       guess.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
     }
-    // guess = ["red", "green", "green", "red"];
+    // guess = [ "yellow", "blue", "green", "yellow" ];
     console.log("GUESS", guess);
     // DEV ==================
 
 
+
+
+/* 
+    guess.reduce((acc, color, index) => {
+      if (color === this.CODE[index]) {
+        acc[0].push(color); // blue, yellow
+      } else if (this.CODE.includes(color)) {
+        acc[1].push(color); // yellow, green
+      }
+      return acc;
+    }, [[], []])
+ */
+
+
+
+/* 
+    const test2 = guess.reduce((acc, color, index) => {
+      console.log("\n -> ", color, "- position", index);
+      if (color === this.CODE[index]) {
+        acc[0]++;
+        acc[2].push(index);
+        console.log(`MATCH for ${color} at index ${index}`);
+      } else if (this.CODE.includes(color)) {
+        const i = this.CODE.findIndex((val) => val === color);
+        console.log(`found ${color} at position ${i} in CODE`);
+        
+        if (acc[2].includes(i)) {
+          console.log(`CODE: "${this.CODE[i]}" with index ${i} was already used`);
+          return acc;
+        }
+
+        if (guess[i] !== this.CODE[i]) {
+          console.log(`"${guess[i]}" and "${this.CODE[i]}" IS NO MATCH -> gud color`);
+          acc[1]++;
+          acc[2].push(i);
+        } else {
+          console.log(color, "is a match at", i, "-> skip");
+        }
+      } else {
+        console.log(color, "at position", index, "is not in CODE");
+      }
+
+      return acc;
+    }, [0, 0, []])
+ */
+
+
+    // TODO: tidy up -> Currently in "debug mode" just in case
+    const test3 = guess.reduce((acc, color, index) => {
+      console.log("\n -> ", color, "- position", index);
+
+      if (color === this.CODE[index]) {
+        acc.rightGuesses++;
+        acc._processedItems.push(index);
+        console.log(`MATCH for ${color} at index ${index}`);
+      } else if (this.CODE.includes(color)) {
+        const i = this.CODE.findIndex((val) => val === color);
+        console.log(`found ${color} at position ${i} in CODE`);
+        
+        if (acc._processedItems.includes(i)) {
+          console.log(`CODE: "${this.CODE[i]}" with index ${i} was already used`);
+          // remove "_processedItems" as its only used internally
+          if (index + 1 === guess.length) {
+            delete acc._processedItems;
+          }
+          return acc;
+        }
+
+        if (guess[i] !== this.CODE[i]) {
+          console.log(`"${guess[i]}" and "${this.CODE[i]}" IS NO MATCH -> gud color`);
+          acc.goodColors++;
+          acc._processedItems.push(i);
+        } else {
+          console.log(color, "is a match at", i, "-> skip");
+        }
+      } else {
+        console.log(color, "at position", index, "is not in CODE");
+      }
+
+      // remove "_processedItems" as its only used internally
+      if (index + 1 === guess.length) {
+        delete acc._processedItems;
+      }
+
+      return acc;
+    }, { rightGuesses: 0, goodColors: 0, _processedItems: [] })
+
+    console.log(test3);
+
+
+
+/* 
+    const test = [];
+    guess.forEach((element, index) => {
+      test.push([this.CODE[index], element])
+    });
+    // console.log("original", test);
+
+    const res = test.reduce((acc, value, index) => {
+      if (value[0] === value[1]) {
+        
+      } else if (this.CODE.includes(value)) {
+
+      }
+
+      return acc;
+    }, [0, 0])
+ */
+    // console.log("result", test, res);
+
+
+
+
+
+
+/* 
     const nonMatches = guess.filter((color, index) => color !== this.CODE[index]);
     const matches = this.CODE.length - nonMatches.length;
-    console.log("matches", matches);
+    // console.log(nonMatches);
+    // console.log("matches", matches);
 
     // const gudColors = this.CODE.filter((color, index) => {
     //   return nonMatches.includes(color) && color !== guess[index];
     // });
-    
-    const gudColors = nonMatches.filter((color, index) => {
-      return this.CODE.includes(color)/* && color !== this.CODE[index]*/;
-    });
-    console.log("gudColors", gudColors);
 
+    const gudColors = nonMatches.filter((color, index) => {
+      return this.CODE.includes(color) && nonMatches[index] !== this.CODE[index];
+    });
+    // console.log("gudColors", gudColors);
+ */
     
-    return [matches, gudColors.length];
+    return [0, 0];
   }
 }
