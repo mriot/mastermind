@@ -31,9 +31,9 @@ export default class Game {
     // for (let i = 0; i < 4; i++) {
     //   guess.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
     // }
-    // console.log("GUESS", guess);
     // // ! DEV ==================
-
+    
+    console.log("GUESS", guess);
 
 /* 
     const test2 = guess.reduce((acc, color, index) => {

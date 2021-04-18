@@ -6,7 +6,7 @@
   // DEBUGGING:
   const game = new Game();
   game.start();
-  game.validateGuess();
+  game.validateGuess(["red", "yellow", "purple", "purple"]);
 </script>
 
 <div id="gameboard">
