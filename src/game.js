@@ -9,7 +9,6 @@ export default class Game {
     for (let i = 0; i < 4; i++) {
       this.CODE.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
     }
-    // this.CODE = [ "green", "blue", "blue", "yellow" ];
     console.log("CODE", this.CODE);
   }
 
@@ -27,29 +26,13 @@ export default class Game {
    * @param {ARRAY} guess 
    */
   validateGuess(guess) {
-    // DEV ==================
-    guess = [];
-    for (let i = 0; i < 4; i++) {
-      guess.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
-    }
-    // guess = [ "yellow", "blue", "green", "yellow" ];
-    console.log("GUESS", guess);
-    // DEV ==================
-
-
-
-
-/* 
-    guess.reduce((acc, color, index) => {
-      if (color === this.CODE[index]) {
-        acc[0].push(color); // blue, yellow
-      } else if (this.CODE.includes(color)) {
-        acc[1].push(color); // yellow, green
-      }
-      return acc;
-    }, [[], []])
- */
-
+    // // ! DEV ==================
+    // guess = [];
+    // for (let i = 0; i < 4; i++) {
+    //   guess.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
+    // }
+    // console.log("GUESS", guess);
+    // // ! DEV ==================
 
 
 /* 
@@ -85,7 +68,8 @@ export default class Game {
 
 
     // TODO: tidy up -> Currently in "debug mode" just in case
-    const test3 = guess.reduce((acc, color, index) => {
+    console.groupCollapsed("GUESS VALIDATOR");
+    const validationResult = guess.reduce((acc, color, index) => {
       console.log("\n -> ", color, "- position", index);
 
       if (color === this.CODE[index]) {
@@ -122,9 +106,11 @@ export default class Game {
       }
 
       return acc;
-    }, { rightGuesses: 0, goodColors: 0, _processedItems: [] })
+    }, { rightGuesses: 0, goodColors: 0, _processedItems: [] });
+    
+    console.log(validationResult);
+    console.groupEnd("GUESS VALIDATOR");
 
-    console.log(test3);
 
 
 
@@ -168,6 +154,6 @@ export default class Game {
     // console.log("gudColors", gudColors);
  */
     
-    return [0, 0];
+    return validationResult;
   }
 }
