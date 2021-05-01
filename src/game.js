@@ -2,6 +2,7 @@ export default class Game {
   constructor() {
     this.CODE = [];
     this.COLORS = ["red", "green", "blue", "yellow", "purple", "brown"];
+    console.log("Game created");
   }
 
   start() {

@@ -27,6 +27,21 @@ var app = (function () {
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
+    function validate_store(store, name) {
+        if (store != null && typeof store.subscribe !== 'function') {
+            throw new Error(`'${name}' is not a store with a 'subscribe' method`);
+        }
+    }
+    function subscribe(store, ...callbacks) {
+        if (store == null) {
+            return noop;
+        }
+        const unsub = store.subscribe(...callbacks);
+        return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
+    }
+    function component_subscribe(component, store, callback) {
+        component.$$.on_destroy.push(subscribe(store, callback));
+    }
 
     function append(target, node) {
         target.appendChild(node);
@@ -67,6 +82,9 @@ var app = (function () {
     }
     function set_style(node, key, value, important) {
         node.style.setProperty(key, value, important ? 'important' : '');
+    }
+    function toggle_class(element, name, toggle) {
+        element.classList[toggle ? 'add' : 'remove'](name);
     }
     function custom_event(type, detail) {
         const e = document.createEvent('CustomEvent');
@@ -182,6 +200,12 @@ var app = (function () {
             block.o(local);
         }
     }
+
+    const globals = (typeof window !== 'undefined'
+        ? window
+        : typeof globalThis !== 'undefined'
+            ? globalThis
+            : global);
 
     function bind(component, name, callback) {
         const index = component.$$.props[name];
@@ -491,14 +515,14 @@ var app = (function () {
       constructor() {
         this.CODE = [];
         this.COLORS = ["red", "green", "blue", "yellow", "purple", "brown"];
+        console.log("Game created");
       }
 
       start() {
         // start a game session
-        // for (let i = 0; i < 4; i++) {
-        //   this.CODE.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
-        // }
-        this.CODE = ["red", "green", "purple", "brown"];
+        for (let i = 0; i < 4; i++) {
+          this.CODE.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
+        }
         console.log("CODE", this.CODE);
       }
 
@@ -516,40 +540,136 @@ var app = (function () {
        * @param {ARRAY} guess 
        */
       validateGuess(guess) {
-        // guess = ["red", "green", "purple", "brown"];
-        guess = ["red", "green", "brown", "red"];
+        // // ! DEV ==================
+        // guess = [];
+        // for (let i = 0; i < 4; i++) {
+        //   guess.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
+        // }
+        // // ! DEV ==================
+        
         console.log("GUESS", guess);
 
-        // const result = guess.every((value, index) => value === this.CODE[index]);
-        // console.log("guess match:", result);
+    /* 
+        const test2 = guess.reduce((acc, color, index) => {
+          console.log("\n -> ", color, "- position", index);
+          if (color === this.CODE[index]) {
+            acc[0]++;
+            acc[2].push(index);
+            console.log(`MATCH for ${color} at index ${index}`);
+          } else if (this.CODE.includes(color)) {
+            const i = this.CODE.findIndex((val) => val === color);
+            console.log(`found ${color} at position ${i} in CODE`);
+            
+            if (acc[2].includes(i)) {
+              console.log(`CODE: "${this.CODE[i]}" with index ${i} was already used`);
+              return acc;
+            }
 
-        // TODO count correct colors (regardless of slot)
-        const rightColors = guess.reduce((prev, value, index) => {
-          // BUG: counts same color multiple times
-          if (this.CODE.includes(value)) {
-            console.log(value);
-            prev++;
+            if (guess[i] !== this.CODE[i]) {
+              console.log(`"${guess[i]}" and "${this.CODE[i]}" IS NO MATCH -> gud color`);
+              acc[1]++;
+              acc[2].push(i);
+            } else {
+              console.log(color, "is a match at", i, "-> skip");
+            }
+          } else {
+            console.log(color, "at position", index, "is not in CODE");
           }
-          return prev;
-        }, 0);
 
-        console.log("rightColors", rightColors);
+          return acc;
+        }, [0, 0, []])
+     */
 
-        // count correct colors + slots
-        const rightGuesses = guess.reduce((prev, value, index) => {
-          if (value === this.CODE[index]) {
-            prev++;
+
+        // TODO: tidy up -> Currently in "debug mode" just in case
+        console.groupCollapsed("GUESS VALIDATOR");
+        const validationResult = guess.reduce((acc, color, index) => {
+          console.log("\n -> ", color, "- position", index);
+
+          if (color === this.CODE[index]) {
+            acc.rightGuesses++;
+            acc._processedItems.push(index);
+            console.log(`MATCH for ${color} at index ${index}`);
+          } else if (this.CODE.includes(color)) {
+            const i = this.CODE.findIndex((val) => val === color);
+            console.log(`found ${color} at position ${i} in CODE`);
+            
+            if (acc._processedItems.includes(i)) {
+              console.log(`CODE: "${this.CODE[i]}" with index ${i} was already used`);
+              // remove "_processedItems" as its only used internally
+              if (index + 1 === guess.length) {
+                delete acc._processedItems;
+              }
+              return acc;
+            }
+
+            if (guess[i] !== this.CODE[i]) {
+              console.log(`"${guess[i]}" and "${this.CODE[i]}" IS NO MATCH -> gud color`);
+              acc.goodColors++;
+              acc._processedItems.push(i);
+            } else {
+              console.log(color, "is a match at", i, "-> skip");
+            }
+          } else {
+            console.log(color, "at position", index, "is not in CODE");
           }
-          return prev;
-        }, 0);
 
-        console.log("rightGuesses", rightGuesses);
+          // remove "_processedItems" as its only used internally
+          if (index + 1 === guess.length) {
+            delete acc._processedItems;
+          }
 
-        // return 
-        return rightGuesses < 4 ? rightGuesses : true;
+          return acc;
+        }, { rightGuesses: 0, goodColors: 0, _processedItems: [] });
+        
+        console.log(validationResult);
+        console.groupEnd("GUESS VALIDATOR");
+
+
+
+
+    /* 
+        const test = [];
+        guess.forEach((element, index) => {
+          test.push([this.CODE[index], element])
+        });
+        // console.log("original", test);
+
+        const res = test.reduce((acc, value, index) => {
+          if (value[0] === value[1]) {
+            
+          } else if (this.CODE.includes(value)) {
+
+          }
+
+          return acc;
+        }, [0, 0])
+     */
+        // console.log("result", test, res);
+
+
+
+
+
+
+    /* 
+        const nonMatches = guess.filter((color, index) => color !== this.CODE[index]);
+        const matches = this.CODE.length - nonMatches.length;
+        // console.log(nonMatches);
+        // console.log("matches", matches);
+
+        // const gudColors = this.CODE.filter((color, index) => {
+        //   return nonMatches.includes(color) && color !== guess[index];
+        // });
+
+        const gudColors = nonMatches.filter((color, index) => {
+          return this.CODE.includes(color) && nonMatches[index] !== this.CODE[index];
+        });
+        // console.log("gudColors", gudColors);
+     */
+        
+        return validationResult;
       }
-
-
     }
 
     /* src/ColorPicker.svelte generated by Svelte v3.37.0 */
@@ -854,20 +974,20 @@ var app = (function () {
     /* src/ColorButton.svelte generated by Svelte v3.37.0 */
     const file$5 = "src/ColorButton.svelte";
 
-    // (14:2) {#if pickerOpen}
+    // (16:2) {#if pickerOpen && active}
     function create_if_block(ctx) {
     	let colorpicker;
     	let updating_selectedColor;
     	let current;
 
     	function colorpicker_selectedColor_binding(value) {
-    		/*colorpicker_selectedColor_binding*/ ctx[2](value);
+    		/*colorpicker_selectedColor_binding*/ ctx[3](value);
     	}
 
     	let colorpicker_props = {};
 
-    	if (/*selectedColor*/ ctx[1] !== void 0) {
-    		colorpicker_props.selectedColor = /*selectedColor*/ ctx[1];
+    	if (/*selectedColor*/ ctx[0] !== void 0) {
+    		colorpicker_props.selectedColor = /*selectedColor*/ ctx[0];
     	}
 
     	colorpicker = new ColorPicker({ props: colorpicker_props, $$inline: true });
@@ -884,9 +1004,9 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const colorpicker_changes = {};
 
-    			if (!updating_selectedColor && dirty & /*selectedColor*/ 2) {
+    			if (!updating_selectedColor && dirty & /*selectedColor*/ 1) {
     				updating_selectedColor = true;
-    				colorpicker_changes.selectedColor = /*selectedColor*/ ctx[1];
+    				colorpicker_changes.selectedColor = /*selectedColor*/ ctx[0];
     				add_flush_callback(() => updating_selectedColor = false);
     			}
 
@@ -910,7 +1030,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(14:2) {#if pickerOpen}",
+    		source: "(16:2) {#if pickerOpen && active}",
     		ctx
     	});
 
@@ -922,15 +1042,16 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	let if_block = /*pickerOpen*/ ctx[0] && create_if_block(ctx);
+    	let if_block = /*pickerOpen*/ ctx[2] && /*active*/ ctx[1] && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
     			div = element("div");
     			if (if_block) if_block.c();
-    			attr_dev(div, "class", "color-button svelte-1sr0jqv");
-    			set_style(div, "background-color", /*selectedColor*/ ctx[1]);
-    			add_location(div, file$5, 7, 0, 123);
+    			attr_dev(div, "class", "color-button svelte-78n910");
+    			set_style(div, "background-color", /*selectedColor*/ ctx[0]);
+    			toggle_class(div, "inactive", !/*active*/ ctx[1]);
+    			add_location(div, file$5, 8, 0, 159);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -942,19 +1063,19 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(div, "mouseenter", /*mouseenter_handler*/ ctx[3], false, false, false),
-    					listen_dev(div, "mouseleave", /*mouseleave_handler*/ ctx[4], false, false, false)
+    					listen_dev(div, "mouseenter", /*mouseenter_handler*/ ctx[4], false, false, false),
+    					listen_dev(div, "mouseleave", /*mouseleave_handler*/ ctx[5], false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (/*pickerOpen*/ ctx[0]) {
+    			if (/*pickerOpen*/ ctx[2] && /*active*/ ctx[1]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
-    					if (dirty & /*pickerOpen*/ 1) {
+    					if (dirty & /*pickerOpen, active*/ 6) {
     						transition_in(if_block, 1);
     					}
     				} else {
@@ -973,8 +1094,12 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (!current || dirty & /*selectedColor*/ 2) {
-    				set_style(div, "background-color", /*selectedColor*/ ctx[1]);
+    			if (!current || dirty & /*selectedColor*/ 1) {
+    				set_style(div, "background-color", /*selectedColor*/ ctx[0]);
+    			}
+
+    			if (dirty & /*active*/ 2) {
+    				toggle_class(div, "inactive", !/*active*/ ctx[1]);
     			}
     		},
     		i: function intro(local) {
@@ -1008,9 +1133,10 @@ var app = (function () {
     function instance$5($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ColorButton", slots, []);
+    	let { active = false } = $$props;
+    	let { selectedColor = "" } = $$props;
     	let pickerOpen = false;
-    	let selectedColor = "";
-    	const writable_props = [];
+    	const writable_props = ["active", "selectedColor"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ColorButton> was created with unknown prop '${key}'`);
@@ -1018,16 +1144,28 @@ var app = (function () {
 
     	function colorpicker_selectedColor_binding(value) {
     		selectedColor = value;
-    		$$invalidate(1, selectedColor);
+    		$$invalidate(0, selectedColor);
     	}
 
-    	const mouseenter_handler = () => $$invalidate(0, pickerOpen = true);
-    	const mouseleave_handler = () => $$invalidate(0, pickerOpen = false);
-    	$$self.$capture_state = () => ({ ColorPicker, pickerOpen, selectedColor });
+    	const mouseenter_handler = () => $$invalidate(2, pickerOpen = true);
+    	const mouseleave_handler = () => $$invalidate(2, pickerOpen = false);
+
+    	$$self.$$set = $$props => {
+    		if ("active" in $$props) $$invalidate(1, active = $$props.active);
+    		if ("selectedColor" in $$props) $$invalidate(0, selectedColor = $$props.selectedColor);
+    	};
+
+    	$$self.$capture_state = () => ({
+    		ColorPicker,
+    		active,
+    		selectedColor,
+    		pickerOpen
+    	});
 
     	$$self.$inject_state = $$props => {
-    		if ("pickerOpen" in $$props) $$invalidate(0, pickerOpen = $$props.pickerOpen);
-    		if ("selectedColor" in $$props) $$invalidate(1, selectedColor = $$props.selectedColor);
+    		if ("active" in $$props) $$invalidate(1, active = $$props.active);
+    		if ("selectedColor" in $$props) $$invalidate(0, selectedColor = $$props.selectedColor);
+    		if ("pickerOpen" in $$props) $$invalidate(2, pickerOpen = $$props.pickerOpen);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1035,8 +1173,9 @@ var app = (function () {
     	}
 
     	return [
-    		pickerOpen,
     		selectedColor,
+    		active,
+    		pickerOpen,
     		colorpicker_selectedColor_binding,
     		mouseenter_handler,
     		mouseleave_handler
@@ -1046,7 +1185,7 @@ var app = (function () {
     class ColorButton extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$5, create_fragment$5, safe_not_equal, {});
+    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { active: 1, selectedColor: 0 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1054,6 +1193,22 @@ var app = (function () {
     			options,
     			id: create_fragment$5.name
     		});
+    	}
+
+    	get active() {
+    		throw new Error("<ColorButton>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set active(value) {
+    		throw new Error("<ColorButton>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get selectedColor() {
+    		throw new Error("<ColorButton>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set selectedColor(value) {
+    		throw new Error("<ColorButton>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
@@ -1151,7 +1306,65 @@ var app = (function () {
     	}
     }
 
+    const subscriber_queue = [];
+    /**
+     * Create a `Writable` store that allows both updating and reading by subscription.
+     * @param {*=}value initial value
+     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
+     */
+    function writable(value, start = noop) {
+        let stop;
+        const subscribers = [];
+        function set(new_value) {
+            if (safe_not_equal(value, new_value)) {
+                value = new_value;
+                if (stop) { // store is ready
+                    const run_queue = !subscriber_queue.length;
+                    for (let i = 0; i < subscribers.length; i += 1) {
+                        const s = subscribers[i];
+                        s[1]();
+                        subscriber_queue.push(s, value);
+                    }
+                    if (run_queue) {
+                        for (let i = 0; i < subscriber_queue.length; i += 2) {
+                            subscriber_queue[i][0](subscriber_queue[i + 1]);
+                        }
+                        subscriber_queue.length = 0;
+                    }
+                }
+            }
+        }
+        function update(fn) {
+            set(fn(value));
+        }
+        function subscribe(run, invalidate = noop) {
+            const subscriber = [run, invalidate];
+            subscribers.push(subscriber);
+            if (subscribers.length === 1) {
+                stop = start(set) || noop;
+            }
+            run(value);
+            return () => {
+                const index = subscribers.indexOf(subscriber);
+                if (index !== -1) {
+                    subscribers.splice(index, 1);
+                }
+                if (subscribers.length === 0) {
+                    stop();
+                    stop = null;
+                }
+            };
+        }
+        return { set, update, subscribe };
+    }
+
+    const currentStep = writable(0);
+
+    const game = writable(new Game());
+
     /* src/Gamerow.svelte generated by Svelte v3.37.0 */
+
+    const { console: console_1 } = globals;
     const file$3 = "src/Gamerow.svelte";
 
     function create_fragment$3(ctx) {
@@ -1161,20 +1374,88 @@ var app = (function () {
     	let t1;
     	let main;
     	let colorbutton0;
+    	let updating_selectedColor;
     	let t2;
     	let colorbutton1;
+    	let updating_selectedColor_1;
     	let t3;
     	let colorbutton2;
+    	let updating_selectedColor_2;
     	let t4;
     	let colorbutton3;
+    	let updating_selectedColor_3;
     	let t5;
     	let aside1;
     	let guessinfo;
     	let current;
-    	colorbutton0 = new ColorButton({ $$inline: true });
-    	colorbutton1 = new ColorButton({ $$inline: true });
-    	colorbutton2 = new ColorButton({ $$inline: true });
-    	colorbutton3 = new ColorButton({ $$inline: true });
+
+    	function colorbutton0_selectedColor_binding(value) {
+    		/*colorbutton0_selectedColor_binding*/ ctx[7](value);
+    	}
+
+    	let colorbutton0_props = { active: /*active*/ ctx[1] };
+
+    	if (/*color1*/ ctx[2] !== void 0) {
+    		colorbutton0_props.selectedColor = /*color1*/ ctx[2];
+    	}
+
+    	colorbutton0 = new ColorButton({
+    			props: colorbutton0_props,
+    			$$inline: true
+    		});
+
+    	binding_callbacks.push(() => bind(colorbutton0, "selectedColor", colorbutton0_selectedColor_binding));
+
+    	function colorbutton1_selectedColor_binding(value) {
+    		/*colorbutton1_selectedColor_binding*/ ctx[8](value);
+    	}
+
+    	let colorbutton1_props = { active: /*active*/ ctx[1] };
+
+    	if (/*color2*/ ctx[3] !== void 0) {
+    		colorbutton1_props.selectedColor = /*color2*/ ctx[3];
+    	}
+
+    	colorbutton1 = new ColorButton({
+    			props: colorbutton1_props,
+    			$$inline: true
+    		});
+
+    	binding_callbacks.push(() => bind(colorbutton1, "selectedColor", colorbutton1_selectedColor_binding));
+
+    	function colorbutton2_selectedColor_binding(value) {
+    		/*colorbutton2_selectedColor_binding*/ ctx[9](value);
+    	}
+
+    	let colorbutton2_props = { active: /*active*/ ctx[1] };
+
+    	if (/*color3*/ ctx[4] !== void 0) {
+    		colorbutton2_props.selectedColor = /*color3*/ ctx[4];
+    	}
+
+    	colorbutton2 = new ColorButton({
+    			props: colorbutton2_props,
+    			$$inline: true
+    		});
+
+    	binding_callbacks.push(() => bind(colorbutton2, "selectedColor", colorbutton2_selectedColor_binding));
+
+    	function colorbutton3_selectedColor_binding(value) {
+    		/*colorbutton3_selectedColor_binding*/ ctx[10](value);
+    	}
+
+    	let colorbutton3_props = { active: /*active*/ ctx[1] };
+
+    	if (/*color4*/ ctx[5] !== void 0) {
+    		colorbutton3_props.selectedColor = /*color4*/ ctx[5];
+    	}
+
+    	colorbutton3 = new ColorButton({
+    			props: colorbutton3_props,
+    			$$inline: true
+    		});
+
+    	binding_callbacks.push(() => bind(colorbutton3, "selectedColor", colorbutton3_selectedColor_binding));
     	guessinfo = new GuessInfo({ $$inline: true });
 
     	const block = {
@@ -1194,13 +1475,14 @@ var app = (function () {
     			t5 = space();
     			aside1 = element("aside");
     			create_component(guessinfo.$$.fragment);
-    			add_location(aside0, file$3, 8, 2, 167);
-    			attr_dev(main, "class", "svelte-4ydb9h");
-    			add_location(main, file$3, 9, 2, 197);
-    			add_location(aside1, file$3, 15, 2, 296);
+    			add_location(aside0, file$3, 29, 2, 687);
+    			attr_dev(main, "class", "svelte-5r209y");
+    			add_location(main, file$3, 30, 2, 717);
+    			add_location(aside1, file$3, 36, 2, 964);
     			attr_dev(div, "id", "gamerow");
-    			attr_dev(div, "class", "svelte-4ydb9h");
-    			add_location(div, file$3, 7, 0, 146);
+    			attr_dev(div, "class", "svelte-5r209y");
+    			toggle_class(div, "active", /*active*/ ctx[1]);
+    			add_location(div, file$3, 28, 0, 653);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1225,6 +1507,50 @@ var app = (function () {
     		},
     		p: function update(ctx, [dirty]) {
     			if (!current || dirty & /*lineNumber*/ 1) set_data_dev(t0, /*lineNumber*/ ctx[0]);
+    			const colorbutton0_changes = {};
+    			if (dirty & /*active*/ 2) colorbutton0_changes.active = /*active*/ ctx[1];
+
+    			if (!updating_selectedColor && dirty & /*color1*/ 4) {
+    				updating_selectedColor = true;
+    				colorbutton0_changes.selectedColor = /*color1*/ ctx[2];
+    				add_flush_callback(() => updating_selectedColor = false);
+    			}
+
+    			colorbutton0.$set(colorbutton0_changes);
+    			const colorbutton1_changes = {};
+    			if (dirty & /*active*/ 2) colorbutton1_changes.active = /*active*/ ctx[1];
+
+    			if (!updating_selectedColor_1 && dirty & /*color2*/ 8) {
+    				updating_selectedColor_1 = true;
+    				colorbutton1_changes.selectedColor = /*color2*/ ctx[3];
+    				add_flush_callback(() => updating_selectedColor_1 = false);
+    			}
+
+    			colorbutton1.$set(colorbutton1_changes);
+    			const colorbutton2_changes = {};
+    			if (dirty & /*active*/ 2) colorbutton2_changes.active = /*active*/ ctx[1];
+
+    			if (!updating_selectedColor_2 && dirty & /*color3*/ 16) {
+    				updating_selectedColor_2 = true;
+    				colorbutton2_changes.selectedColor = /*color3*/ ctx[4];
+    				add_flush_callback(() => updating_selectedColor_2 = false);
+    			}
+
+    			colorbutton2.$set(colorbutton2_changes);
+    			const colorbutton3_changes = {};
+    			if (dirty & /*active*/ 2) colorbutton3_changes.active = /*active*/ ctx[1];
+
+    			if (!updating_selectedColor_3 && dirty & /*color4*/ 32) {
+    				updating_selectedColor_3 = true;
+    				colorbutton3_changes.selectedColor = /*color4*/ ctx[5];
+    				add_flush_callback(() => updating_selectedColor_3 = false);
+    			}
+
+    			colorbutton3.$set(colorbutton3_changes);
+
+    			if (dirty & /*active*/ 2) {
+    				toggle_class(div, "active", /*active*/ ctx[1]);
+    			}
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -1265,36 +1591,112 @@ var app = (function () {
     }
 
     function instance$3($$self, $$props, $$invalidate) {
+    	let $game;
+    	validate_store(game, "game");
+    	component_subscribe($$self, game, $$value => $$invalidate(6, $game = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Gamerow", slots, []);
     	let { lineNumber = 0 } = $$props;
-    	const writable_props = ["lineNumber"];
+    	let { active = false } = $$props;
+    	let color1 = "green";
+    	let color2 = "green";
+    	let color3 = "green";
+    	let color4;
+    	const writable_props = ["lineNumber", "active"];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Gamerow> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1.warn(`<Gamerow> was created with unknown prop '${key}'`);
     	});
+
+    	function colorbutton0_selectedColor_binding(value) {
+    		color1 = value;
+    		$$invalidate(2, color1);
+    	}
+
+    	function colorbutton1_selectedColor_binding(value) {
+    		color2 = value;
+    		$$invalidate(3, color2);
+    	}
+
+    	function colorbutton2_selectedColor_binding(value) {
+    		color3 = value;
+    		$$invalidate(4, color3);
+    	}
+
+    	function colorbutton3_selectedColor_binding(value) {
+    		color4 = value;
+    		$$invalidate(5, color4);
+    	}
 
     	$$self.$$set = $$props => {
     		if ("lineNumber" in $$props) $$invalidate(0, lineNumber = $$props.lineNumber);
+    		if ("active" in $$props) $$invalidate(1, active = $$props.active);
     	};
 
-    	$$self.$capture_state = () => ({ ColorButton, GuessInfo, lineNumber });
+    	$$self.$capture_state = () => ({
+    		ColorButton,
+    		GuessInfo,
+    		currentStep,
+    		game,
+    		lineNumber,
+    		active,
+    		color1,
+    		color2,
+    		color3,
+    		color4,
+    		$game
+    	});
 
     	$$self.$inject_state = $$props => {
     		if ("lineNumber" in $$props) $$invalidate(0, lineNumber = $$props.lineNumber);
+    		if ("active" in $$props) $$invalidate(1, active = $$props.active);
+    		if ("color1" in $$props) $$invalidate(2, color1 = $$props.color1);
+    		if ("color2" in $$props) $$invalidate(3, color2 = $$props.color2);
+    		if ("color3" in $$props) $$invalidate(4, color3 = $$props.color3);
+    		if ("color4" in $$props) $$invalidate(5, color4 = $$props.color4);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [lineNumber];
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*color1, color2, color3, color4, $game*/ 124) {
+    			{
+    				if (color1 && color2 && color3 && color4) {
+    					console.log(color1);
+    					console.log(color2);
+    					console.log(color3);
+    					console.log(color4);
+    					const res = $game.validateGuess([color1, color2, color3, color4]);
+
+    					if (res.rightGuesses !== 4) {
+    						currentStep.update(current => current + 1);
+    					}
+    				}
+    			}
+    		}
+    	};
+
+    	return [
+    		lineNumber,
+    		active,
+    		color1,
+    		color2,
+    		color3,
+    		color4,
+    		$game,
+    		colorbutton0_selectedColor_binding,
+    		colorbutton1_selectedColor_binding,
+    		colorbutton2_selectedColor_binding,
+    		colorbutton3_selectedColor_binding
+    	];
     }
 
     class Gamerow extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { lineNumber: 0 });
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { lineNumber: 0, active: 1 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1311,6 +1713,14 @@ var app = (function () {
     	set lineNumber(value) {
     		throw new Error("<Gamerow>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
+
+    	get active() {
+    		throw new Error("<Gamerow>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set active(value) {
+    		throw new Error("<Gamerow>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
     }
 
     /* src/Gameboard.svelte generated by Svelte v3.37.0 */
@@ -1323,13 +1733,16 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (19:4) {#each Array(10) as _, i}
+    // (15:4) {#each Array(10) as _, i}
     function create_each_block(ctx) {
     	let gamerow;
     	let current;
 
     	gamerow = new Gamerow({
-    			props: { lineNumber: /*i*/ ctx[3] + 1 },
+    			props: {
+    				lineNumber: /*i*/ ctx[3] + 1,
+    				active: /*$currentStep*/ ctx[0] === /*i*/ ctx[3]
+    			},
     			$$inline: true
     		});
 
@@ -1341,7 +1754,11 @@ var app = (function () {
     			mount_component(gamerow, target, anchor);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			const gamerow_changes = {};
+    			if (dirty & /*$currentStep*/ 1) gamerow_changes.active = /*$currentStep*/ ctx[0] === /*i*/ ctx[3];
+    			gamerow.$set(gamerow_changes);
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(gamerow.$$.fragment, local);
@@ -1360,7 +1777,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(19:4) {#each Array(10) as _, i}",
+    		source: "(15:4) {#each Array(10) as _, i}",
     		ctx
     	});
 
@@ -1402,6 +1819,10 @@ var app = (function () {
     		each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
     	}
 
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
     	const block = {
     		c: function create() {
     			div = element("div");
@@ -1419,12 +1840,12 @@ var app = (function () {
     			}
 
     			attr_dev(nav, "class", "svelte-1aecwpb");
-    			add_location(nav, file$2, 12, 2, 245);
+    			add_location(nav, file$2, 8, 2, 205);
     			attr_dev(section, "class", "svelte-1aecwpb");
-    			add_location(section, file$2, 17, 2, 349);
+    			add_location(section, file$2, 13, 2, 309);
     			attr_dev(div, "id", "gameboard");
     			attr_dev(div, "class", "svelte-1aecwpb");
-    			add_location(div, file$2, 11, 0, 222);
+    			add_location(div, file$2, 7, 0, 182);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1446,7 +1867,35 @@ var app = (function () {
 
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*$currentStep*/ 1) {
+    				each_value = Array(10);
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(section, null);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(button0.$$.fragment, local);
@@ -1492,19 +1941,26 @@ var app = (function () {
     }
 
     function instance$2($$self, $$props, $$invalidate) {
+    	let $currentStep;
+    	validate_store(currentStep, "currentStep");
+    	component_subscribe($$self, currentStep, $$value => $$invalidate(0, $currentStep = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Gameboard", slots, []);
-    	const game = new Game();
-    	game.start();
-    	game.validateGuess();
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<Gameboard> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ Button, Game, Gamerow, game });
-    	return [];
+    	$$self.$capture_state = () => ({
+    		Button,
+    		Game,
+    		Gamerow,
+    		currentStep,
+    		$currentStep
+    	});
+
+    	return [$currentStep];
     }
 
     class Gameboard extends SvelteComponentDev {
@@ -1625,7 +2081,7 @@ var app = (function () {
     			create_component(gameboard.$$.fragment);
     			attr_dev(div, "id", "app");
     			attr_dev(div, "class", "svelte-m00wp7");
-    			add_location(div, file, 5, 0, 106);
+    			add_location(div, file, 8, 0, 158);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1668,15 +2124,19 @@ var app = (function () {
     }
 
     function instance($$self, $$props, $$invalidate) {
+    	let $game;
+    	validate_store(game, "game");
+    	component_subscribe($$self, game, $$value => $$invalidate(0, $game = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
+    	$game.start();
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<App> was created with unknown prop '${key}'`);
     	});
 
-    	$$self.$capture_state = () => ({ Gameboard, Header });
+    	$$self.$capture_state = () => ({ Gameboard, Header, game, $game });
     	return [];
     }
 

@@ -2,11 +2,7 @@
   import Button from "./common/Button.svelte";
   import Game from "./game";
   import Gamerow from "./Gamerow.svelte";
-
-  // DEBUGGING:
-  const game = new Game();
-  game.start();
-  game.validateGuess(["red", "yellow", "purple", "purple"]);
+  import { currentStep } from "./store.js";
 </script>
 
 <div id="gameboard">
@@ -17,7 +13,7 @@
   </nav>
   <section>
     {#each Array(10) as _, i}
-      <Gamerow lineNumber={i + 1} />
+      <Gamerow lineNumber={i + 1} active={$currentStep === i} />
     {/each}
   </section>
 </div>

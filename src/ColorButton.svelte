@@ -1,17 +1,19 @@
 <script>
   import ColorPicker from "./ColorPicker.svelte";
 
+  export let active = false;
+  export let selectedColor = "";
   let pickerOpen = false;
-  let selectedColor = "";
 </script>
 
 <div
   class="color-button"
+  class:inactive={!active}
   style="background-color: {selectedColor}"
   on:mouseenter={() => (pickerOpen = true)}
   on:mouseleave={() => (pickerOpen = false)}
 >
-  {#if pickerOpen}
+  {#if pickerOpen && active}
     <ColorPicker bind:selectedColor />
   {/if}
 </div>
@@ -24,5 +26,9 @@
     background-color: #ccc;
     border-radius: 50%;
     position: relative;
+  }
+
+  .inactive {
+    pointer-events: none;
   }
 </style>
