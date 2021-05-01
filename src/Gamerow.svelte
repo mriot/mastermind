@@ -11,6 +11,8 @@
   let color3 = "green";
   let color4;
 
+  let result;
+
   $: {
     if (color1 && color2 && color3 && color4) {
       console.log(color1);
@@ -18,8 +20,10 @@
       console.log(color3);
       console.log(color4);
 
-      const res = $game.validateGuess([color1, color2, color3, color4]);
-      if (res.rightGuesses !== 4) {
+      result = $game.validateGuess([color1, color2, color3, color4]);
+      console.log(result);
+
+      if (result.rightGuesses !== 4) {
         currentStep.update(current => current + 1);
       }
     }
@@ -35,7 +39,7 @@
     <ColorButton bind:selectedColor={color4} {active} />
   </main>
   <aside>
-    <GuessInfo />
+    <GuessInfo {result} />
   </aside>
 </div>
 

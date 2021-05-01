@@ -676,20 +676,20 @@ var app = (function () {
 
     const file$6 = "src/ColorPicker.svelte";
 
-    function get_each_context$1(ctx, list, i) {
+    function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[5] = list[i];
     	return child_ctx;
     }
 
-    function get_each_context_1(ctx, list, i) {
+    function get_each_context_1$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[5] = list[i];
     	return child_ctx;
     }
 
     // (9:4) {#each colorsL as color}
-    function create_each_block_1(ctx) {
+    function create_each_block_1$1(ctx) {
     	let div;
     	let mounted;
     	let dispose;
@@ -725,7 +725,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_1.name,
+    		id: create_each_block_1$1.name,
     		type: "each",
     		source: "(9:4) {#each colorsL as color}",
     		ctx
@@ -735,7 +735,7 @@ var app = (function () {
     }
 
     // (18:4) {#each colorsR as color}
-    function create_each_block$1(ctx) {
+    function create_each_block$2(ctx) {
     	let div;
     	let mounted;
     	let dispose;
@@ -771,7 +771,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block$1.name,
+    		id: create_each_block$2.name,
     		type: "each",
     		source: "(18:4) {#each colorsR as color}",
     		ctx
@@ -790,7 +790,7 @@ var app = (function () {
     	let each_blocks_1 = [];
 
     	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks_1[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    		each_blocks_1[i] = create_each_block_1$1(get_each_context_1$1(ctx, each_value_1, i));
     	}
 
     	let each_value = /*colorsR*/ ctx[2];
@@ -798,7 +798,7 @@ var app = (function () {
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
+    		each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
     	}
 
     	const block = {
@@ -848,12 +848,12 @@ var app = (function () {
     				let i;
 
     				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+    					const child_ctx = get_each_context_1$1(ctx, each_value_1, i);
 
     					if (each_blocks_1[i]) {
     						each_blocks_1[i].p(child_ctx, dirty);
     					} else {
-    						each_blocks_1[i] = create_each_block_1(child_ctx);
+    						each_blocks_1[i] = create_each_block_1$1(child_ctx);
     						each_blocks_1[i].c();
     						each_blocks_1[i].m(div0, null);
     					}
@@ -872,12 +872,12 @@ var app = (function () {
     				let i;
 
     				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$1(ctx, each_value, i);
+    					const child_ctx = get_each_context$2(ctx, each_value, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     					} else {
-    						each_blocks[i] = create_each_block$1(child_ctx);
+    						each_blocks[i] = create_each_block$2(child_ctx);
     						each_blocks[i].c();
     						each_blocks[i].m(div1, null);
     					}
@@ -1216,56 +1216,265 @@ var app = (function () {
 
     const file$4 = "src/GuessInfo.svelte";
 
-    function create_fragment$4(ctx) {
-    	let div4;
-    	let div0;
-    	let t0;
-    	let div1;
-    	let t1;
-    	let div2;
-    	let t2;
-    	let div3;
+    function get_each_context$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[3] = list[i];
+    	return child_ctx;
+    }
+
+    function get_each_context_1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[3] = list[i];
+    	return child_ctx;
+    }
+
+    function get_each_context_2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[3] = list[i];
+    	return child_ctx;
+    }
+
+    // (14:2) {#each Array(4 - rightColorsPins - rightGuessPins) as _}
+    function create_each_block_2(ctx) {
+    	let div;
 
     	const block = {
     		c: function create() {
-    			div4 = element("div");
-    			div0 = element("div");
+    			div = element("div");
+    			div.textContent = "d";
+    			attr_dev(div, "class", "pin svelte-d00f7o");
+    			add_location(div, file$4, 14, 4, 331);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(14:2) {#each Array(4 - rightColorsPins - rightGuessPins) as _}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (17:2) {#each Array(rightColorsPins) as _}
+    function create_each_block_1(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			div.textContent = "c";
+    			attr_dev(div, "class", "pin right-color svelte-d00f7o");
+    			add_location(div, file$4, 17, 4, 408);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_1.name,
+    		type: "each",
+    		source: "(17:2) {#each Array(rightColorsPins) as _}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (20:2) {#each Array(rightGuessPins) as _}
+    function create_each_block$1(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			div.textContent = "g";
+    			attr_dev(div, "class", "pin right-guess svelte-d00f7o");
+    			add_location(div, file$4, 20, 4, 496);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$1.name,
+    		type: "each",
+    		source: "(20:2) {#each Array(rightGuessPins) as _}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$4(ctx) {
+    	let div;
+    	let t0;
+    	let t1;
+    	let each_value_2 = Array(4 - /*rightColorsPins*/ ctx[1] - /*rightGuessPins*/ ctx[0]);
+    	validate_each_argument(each_value_2);
+    	let each_blocks_2 = [];
+
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		each_blocks_2[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
+    	}
+
+    	let each_value_1 = Array(/*rightColorsPins*/ ctx[1]);
+    	validate_each_argument(each_value_1);
+    	let each_blocks_1 = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks_1[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
+    	}
+
+    	let each_value = Array(/*rightGuessPins*/ ctx[0]);
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$1(get_each_context$1(ctx, each_value, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].c();
+    			}
+
     			t0 = space();
-    			div1 = element("div");
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].c();
+    			}
+
     			t1 = space();
-    			div2 = element("div");
-    			t2 = space();
-    			div3 = element("div");
-    			attr_dev(div0, "class", "pin svelte-1ifod36");
-    			add_location(div0, file$4, 1, 2, 21);
-    			attr_dev(div1, "class", "pin svelte-1ifod36");
-    			add_location(div1, file$4, 2, 2, 43);
-    			attr_dev(div2, "class", "pin svelte-1ifod36");
-    			add_location(div2, file$4, 3, 2, 65);
-    			attr_dev(div3, "class", "pin svelte-1ifod36");
-    			add_location(div3, file$4, 4, 2, 87);
-    			attr_dev(div4, "id", "wrapper");
-    			attr_dev(div4, "class", "svelte-1ifod36");
-    			add_location(div4, file$4, 0, 0, 0);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(div, "id", "wrapper");
+    			attr_dev(div, "class", "svelte-d00f7o");
+    			add_location(div, file$4, 12, 0, 249);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div4, anchor);
-    			append_dev(div4, div0);
-    			append_dev(div4, t0);
-    			append_dev(div4, div1);
-    			append_dev(div4, t1);
-    			append_dev(div4, div2);
-    			append_dev(div4, t2);
-    			append_dev(div4, div3);
+    			insert_dev(target, div, anchor);
+
+    			for (let i = 0; i < each_blocks_2.length; i += 1) {
+    				each_blocks_2[i].m(div, null);
+    			}
+
+    			append_dev(div, t0);
+
+    			for (let i = 0; i < each_blocks_1.length; i += 1) {
+    				each_blocks_1[i].m(div, null);
+    			}
+
+    			append_dev(div, t1);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(div, null);
+    			}
     		},
-    		p: noop,
+    		p: function update(ctx, [dirty]) {
+    			if (dirty & /*rightColorsPins, rightGuessPins*/ 3) {
+    				const old_length = each_value_2.length;
+    				each_value_2 = Array(4 - /*rightColorsPins*/ ctx[1] - /*rightGuessPins*/ ctx[0]);
+    				validate_each_argument(each_value_2);
+    				let i;
+
+    				for (i = old_length; i < each_value_2.length; i += 1) {
+    					const child_ctx = get_each_context_2(ctx, each_value_2, i);
+
+    					if (!each_blocks_2[i]) {
+    						each_blocks_2[i] = create_each_block_2(child_ctx);
+    						each_blocks_2[i].c();
+    						each_blocks_2[i].m(div, t0);
+    					}
+    				}
+
+    				for (i = each_value_2.length; i < old_length; i += 1) {
+    					each_blocks_2[i].d(1);
+    				}
+
+    				each_blocks_2.length = each_value_2.length;
+    			}
+
+    			if (dirty & /*rightColorsPins*/ 2) {
+    				const old_length = each_value_1.length;
+    				each_value_1 = Array(/*rightColorsPins*/ ctx[1]);
+    				validate_each_argument(each_value_1);
+    				let i;
+
+    				for (i = old_length; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1(ctx, each_value_1, i);
+
+    					if (!each_blocks_1[i]) {
+    						each_blocks_1[i] = create_each_block_1(child_ctx);
+    						each_blocks_1[i].c();
+    						each_blocks_1[i].m(div, t1);
+    					}
+    				}
+
+    				for (i = each_value_1.length; i < old_length; i += 1) {
+    					each_blocks_1[i].d(1);
+    				}
+
+    				each_blocks_1.length = each_value_1.length;
+    			}
+
+    			if (dirty & /*rightGuessPins*/ 1) {
+    				const old_length = each_value.length;
+    				each_value = Array(/*rightGuessPins*/ ctx[0]);
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = old_length; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$1(ctx, each_value, i);
+
+    					if (!each_blocks[i]) {
+    						each_blocks[i] = create_each_block$1(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(div, null);
+    					}
+    				}
+
+    				for (i = each_value.length; i < old_length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+    		},
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div4);
+    			if (detaching) detach_dev(div);
+    			destroy_each(each_blocks_2, detaching);
+    			destroy_each(each_blocks_1, detaching);
+    			destroy_each(each_blocks, detaching);
     		}
     	};
 
@@ -1280,22 +1489,50 @@ var app = (function () {
     	return block;
     }
 
-    function instance$4($$self, $$props) {
+    function instance$4($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("GuessInfo", slots, []);
-    	const writable_props = [];
+    	let { result = {} } = $$props;
+    	let rightGuessPins = result.rightGuesses ?? 0;
+    	let rightColorsPins = result.goodColors ?? 0;
+    	const writable_props = ["result"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<GuessInfo> was created with unknown prop '${key}'`);
     	});
 
-    	return [];
+    	$$self.$$set = $$props => {
+    		if ("result" in $$props) $$invalidate(2, result = $$props.result);
+    	};
+
+    	$$self.$capture_state = () => ({ result, rightGuessPins, rightColorsPins });
+
+    	$$self.$inject_state = $$props => {
+    		if ("result" in $$props) $$invalidate(2, result = $$props.result);
+    		if ("rightGuessPins" in $$props) $$invalidate(0, rightGuessPins = $$props.rightGuessPins);
+    		if ("rightColorsPins" in $$props) $$invalidate(1, rightColorsPins = $$props.rightColorsPins);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*result*/ 4) {
+    			{
+    				$$invalidate(0, rightGuessPins = result.rightGuesses ?? 0);
+    				$$invalidate(1, rightColorsPins = result.goodColors ?? 0);
+    			}
+    		}
+    	};
+
+    	return [rightGuessPins, rightColorsPins, result];
     }
 
     class GuessInfo extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$4, create_fragment$4, safe_not_equal, {});
+    		init(this, options, instance$4, create_fragment$4, safe_not_equal, { result: 2 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1303,6 +1540,14 @@ var app = (function () {
     			options,
     			id: create_fragment$4.name
     		});
+    	}
+
+    	get result() {
+    		throw new Error("<GuessInfo>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set result(value) {
+    		throw new Error("<GuessInfo>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
 
@@ -1390,7 +1635,7 @@ var app = (function () {
     	let current;
 
     	function colorbutton0_selectedColor_binding(value) {
-    		/*colorbutton0_selectedColor_binding*/ ctx[7](value);
+    		/*colorbutton0_selectedColor_binding*/ ctx[8](value);
     	}
 
     	let colorbutton0_props = { active: /*active*/ ctx[1] };
@@ -1407,7 +1652,7 @@ var app = (function () {
     	binding_callbacks.push(() => bind(colorbutton0, "selectedColor", colorbutton0_selectedColor_binding));
 
     	function colorbutton1_selectedColor_binding(value) {
-    		/*colorbutton1_selectedColor_binding*/ ctx[8](value);
+    		/*colorbutton1_selectedColor_binding*/ ctx[9](value);
     	}
 
     	let colorbutton1_props = { active: /*active*/ ctx[1] };
@@ -1424,7 +1669,7 @@ var app = (function () {
     	binding_callbacks.push(() => bind(colorbutton1, "selectedColor", colorbutton1_selectedColor_binding));
 
     	function colorbutton2_selectedColor_binding(value) {
-    		/*colorbutton2_selectedColor_binding*/ ctx[9](value);
+    		/*colorbutton2_selectedColor_binding*/ ctx[10](value);
     	}
 
     	let colorbutton2_props = { active: /*active*/ ctx[1] };
@@ -1441,7 +1686,7 @@ var app = (function () {
     	binding_callbacks.push(() => bind(colorbutton2, "selectedColor", colorbutton2_selectedColor_binding));
 
     	function colorbutton3_selectedColor_binding(value) {
-    		/*colorbutton3_selectedColor_binding*/ ctx[10](value);
+    		/*colorbutton3_selectedColor_binding*/ ctx[11](value);
     	}
 
     	let colorbutton3_props = { active: /*active*/ ctx[1] };
@@ -1456,7 +1701,11 @@ var app = (function () {
     		});
 
     	binding_callbacks.push(() => bind(colorbutton3, "selectedColor", colorbutton3_selectedColor_binding));
-    	guessinfo = new GuessInfo({ $$inline: true });
+
+    	guessinfo = new GuessInfo({
+    			props: { result: /*result*/ ctx[6] },
+    			$$inline: true
+    		});
 
     	const block = {
     		c: function create() {
@@ -1475,14 +1724,14 @@ var app = (function () {
     			t5 = space();
     			aside1 = element("aside");
     			create_component(guessinfo.$$.fragment);
-    			add_location(aside0, file$3, 29, 2, 687);
+    			add_location(aside0, file$3, 33, 2, 730);
     			attr_dev(main, "class", "svelte-5r209y");
-    			add_location(main, file$3, 30, 2, 717);
-    			add_location(aside1, file$3, 36, 2, 964);
+    			add_location(main, file$3, 34, 2, 760);
+    			add_location(aside1, file$3, 40, 2, 1007);
     			attr_dev(div, "id", "gamerow");
     			attr_dev(div, "class", "svelte-5r209y");
     			toggle_class(div, "active", /*active*/ ctx[1]);
-    			add_location(div, file$3, 28, 0, 653);
+    			add_location(div, file$3, 32, 0, 696);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1547,6 +1796,9 @@ var app = (function () {
     			}
 
     			colorbutton3.$set(colorbutton3_changes);
+    			const guessinfo_changes = {};
+    			if (dirty & /*result*/ 64) guessinfo_changes.result = /*result*/ ctx[6];
+    			guessinfo.$set(guessinfo_changes);
 
     			if (dirty & /*active*/ 2) {
     				toggle_class(div, "active", /*active*/ ctx[1]);
@@ -1593,7 +1845,7 @@ var app = (function () {
     function instance$3($$self, $$props, $$invalidate) {
     	let $game;
     	validate_store(game, "game");
-    	component_subscribe($$self, game, $$value => $$invalidate(6, $game = $$value));
+    	component_subscribe($$self, game, $$value => $$invalidate(7, $game = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("Gamerow", slots, []);
     	let { lineNumber = 0 } = $$props;
@@ -1602,6 +1854,7 @@ var app = (function () {
     	let color2 = "green";
     	let color3 = "green";
     	let color4;
+    	let result;
     	const writable_props = ["lineNumber", "active"];
 
     	Object.keys($$props).forEach(key => {
@@ -1644,6 +1897,7 @@ var app = (function () {
     		color2,
     		color3,
     		color4,
+    		result,
     		$game
     	});
 
@@ -1654,6 +1908,7 @@ var app = (function () {
     		if ("color2" in $$props) $$invalidate(3, color2 = $$props.color2);
     		if ("color3" in $$props) $$invalidate(4, color3 = $$props.color3);
     		if ("color4" in $$props) $$invalidate(5, color4 = $$props.color4);
+    		if ("result" in $$props) $$invalidate(6, result = $$props.result);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1661,16 +1916,17 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*color1, color2, color3, color4, $game*/ 124) {
+    		if ($$self.$$.dirty & /*color1, color2, color3, color4, $game, result*/ 252) {
     			{
     				if (color1 && color2 && color3 && color4) {
     					console.log(color1);
     					console.log(color2);
     					console.log(color3);
     					console.log(color4);
-    					const res = $game.validateGuess([color1, color2, color3, color4]);
+    					$$invalidate(6, result = $game.validateGuess([color1, color2, color3, color4]));
+    					console.log(result);
 
-    					if (res.rightGuesses !== 4) {
+    					if (result.rightGuesses !== 4) {
     						currentStep.update(current => current + 1);
     					}
     				}
@@ -1685,6 +1941,7 @@ var app = (function () {
     		color2,
     		color3,
     		color4,
+    		result,
     		$game,
     		colorbutton0_selectedColor_binding,
     		colorbutton1_selectedColor_binding,
