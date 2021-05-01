@@ -1048,7 +1048,7 @@ var app = (function () {
     		c: function create() {
     			div = element("div");
     			if (if_block) if_block.c();
-    			attr_dev(div, "class", "color-button svelte-78n910");
+    			attr_dev(div, "class", "color-button svelte-12vzuqx");
     			set_style(div, "background-color", /*selectedColor*/ ctx[0]);
     			toggle_class(div, "inactive", !/*active*/ ctx[1]);
     			add_location(div, file$5, 8, 0, 159);
@@ -1234,16 +1234,15 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (14:2) {#each Array(4 - rightColorsPins - rightGuessPins) as _}
+    // (14:2) {#each Array(rightColorsPins) as _}
     function create_each_block_2(ctx) {
     	let div;
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			div.textContent = "d";
-    			attr_dev(div, "class", "pin svelte-d00f7o");
-    			add_location(div, file$4, 14, 4, 331);
+    			attr_dev(div, "class", "pin right-color svelte-1f05xg2");
+    			add_location(div, file$4, 14, 4, 266);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -1257,23 +1256,22 @@ var app = (function () {
     		block,
     		id: create_each_block_2.name,
     		type: "each",
-    		source: "(14:2) {#each Array(4 - rightColorsPins - rightGuessPins) as _}",
+    		source: "(14:2) {#each Array(rightColorsPins) as _}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (17:2) {#each Array(rightColorsPins) as _}
+    // (17:2) {#each Array(rightGuessPins) as _}
     function create_each_block_1(ctx) {
     	let div;
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			div.textContent = "c";
-    			attr_dev(div, "class", "pin right-color svelte-d00f7o");
-    			add_location(div, file$4, 17, 4, 408);
+    			attr_dev(div, "class", "pin right-guess svelte-1f05xg2");
+    			add_location(div, file$4, 17, 4, 349);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -1287,23 +1285,22 @@ var app = (function () {
     		block,
     		id: create_each_block_1.name,
     		type: "each",
-    		source: "(17:2) {#each Array(rightColorsPins) as _}",
+    		source: "(17:2) {#each Array(rightGuessPins) as _}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (20:2) {#each Array(rightGuessPins) as _}
+    // (20:2) {#each Array(4 - rightColorsPins - rightGuessPins) as _}
     function create_each_block$1(ctx) {
     	let div;
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			div.textContent = "g";
-    			attr_dev(div, "class", "pin right-guess svelte-d00f7o");
-    			add_location(div, file$4, 20, 4, 496);
+    			attr_dev(div, "class", "pin svelte-1f05xg2");
+    			add_location(div, file$4, 20, 4, 454);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -1317,7 +1314,7 @@ var app = (function () {
     		block,
     		id: create_each_block$1.name,
     		type: "each",
-    		source: "(20:2) {#each Array(rightGuessPins) as _}",
+    		source: "(20:2) {#each Array(4 - rightColorsPins - rightGuessPins) as _}",
     		ctx
     	});
 
@@ -1328,7 +1325,7 @@ var app = (function () {
     	let div;
     	let t0;
     	let t1;
-    	let each_value_2 = Array(4 - /*rightColorsPins*/ ctx[1] - /*rightGuessPins*/ ctx[0]);
+    	let each_value_2 = Array(/*rightColorsPins*/ ctx[1]);
     	validate_each_argument(each_value_2);
     	let each_blocks_2 = [];
 
@@ -1336,7 +1333,7 @@ var app = (function () {
     		each_blocks_2[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
     	}
 
-    	let each_value_1 = Array(/*rightColorsPins*/ ctx[1]);
+    	let each_value_1 = Array(/*rightGuessPins*/ ctx[0]);
     	validate_each_argument(each_value_1);
     	let each_blocks_1 = [];
 
@@ -1344,7 +1341,7 @@ var app = (function () {
     		each_blocks_1[i] = create_each_block_1(get_each_context_1(ctx, each_value_1, i));
     	}
 
-    	let each_value = Array(/*rightGuessPins*/ ctx[0]);
+    	let each_value = Array(4 - /*rightColorsPins*/ ctx[1] - /*rightGuessPins*/ ctx[0]);
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -1373,8 +1370,8 @@ var app = (function () {
     			}
 
     			attr_dev(div, "id", "wrapper");
-    			attr_dev(div, "class", "svelte-d00f7o");
-    			add_location(div, file$4, 12, 0, 249);
+    			attr_dev(div, "class", "svelte-1f05xg2");
+    			add_location(div, file$4, 12, 0, 205);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1399,9 +1396,9 @@ var app = (function () {
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (dirty & /*rightColorsPins, rightGuessPins*/ 3) {
+    			if (dirty & /*rightColorsPins*/ 2) {
     				const old_length = each_value_2.length;
-    				each_value_2 = Array(4 - /*rightColorsPins*/ ctx[1] - /*rightGuessPins*/ ctx[0]);
+    				each_value_2 = Array(/*rightColorsPins*/ ctx[1]);
     				validate_each_argument(each_value_2);
     				let i;
 
@@ -1422,9 +1419,9 @@ var app = (function () {
     				each_blocks_2.length = each_value_2.length;
     			}
 
-    			if (dirty & /*rightColorsPins*/ 2) {
+    			if (dirty & /*rightGuessPins*/ 1) {
     				const old_length = each_value_1.length;
-    				each_value_1 = Array(/*rightColorsPins*/ ctx[1]);
+    				each_value_1 = Array(/*rightGuessPins*/ ctx[0]);
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -1445,9 +1442,9 @@ var app = (function () {
     				each_blocks_1.length = each_value_1.length;
     			}
 
-    			if (dirty & /*rightGuessPins*/ 1) {
+    			if (dirty & /*rightColorsPins, rightGuessPins*/ 3) {
     				const old_length = each_value.length;
-    				each_value = Array(/*rightGuessPins*/ ctx[0]);
+    				each_value = Array(4 - /*rightColorsPins*/ ctx[1] - /*rightGuessPins*/ ctx[0]);
     				validate_each_argument(each_value);
     				let i;
 
@@ -1493,8 +1490,8 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("GuessInfo", slots, []);
     	let { result = {} } = $$props;
-    	let rightGuessPins = result.rightGuesses ?? 0;
-    	let rightColorsPins = result.goodColors ?? 0;
+    	let rightGuessPins = 0;
+    	let rightColorsPins = 0;
     	const writable_props = ["result"];
 
     	Object.keys($$props).forEach(key => {
@@ -1724,14 +1721,14 @@ var app = (function () {
     			t5 = space();
     			aside1 = element("aside");
     			create_component(guessinfo.$$.fragment);
-    			add_location(aside0, file$3, 33, 2, 730);
+    			add_location(aside0, file$3, 35, 2, 742);
     			attr_dev(main, "class", "svelte-5r209y");
-    			add_location(main, file$3, 34, 2, 760);
-    			add_location(aside1, file$3, 40, 2, 1007);
+    			add_location(main, file$3, 36, 2, 772);
+    			add_location(aside1, file$3, 42, 2, 1019);
     			attr_dev(div, "id", "gamerow");
     			attr_dev(div, "class", "svelte-5r209y");
     			toggle_class(div, "active", /*active*/ ctx[1]);
-    			add_location(div, file$3, 32, 0, 696);
+    			add_location(div, file$3, 34, 0, 708);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1850,9 +1847,9 @@ var app = (function () {
     	validate_slots("Gamerow", slots, []);
     	let { lineNumber = 0 } = $$props;
     	let { active = false } = $$props;
-    	let color1 = "green";
-    	let color2 = "green";
-    	let color3 = "green";
+    	let color1;
+    	let color2;
+    	let color3;
     	let color4;
     	let result;
     	const writable_props = ["lineNumber", "active"];
@@ -1928,6 +1925,8 @@ var app = (function () {
 
     					if (result.rightGuesses !== 4) {
     						currentStep.update(current => current + 1);
+    					} else {
+    						alert("You win!");
     					}
     				}
     			}
@@ -1990,7 +1989,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (15:4) {#each Array(10) as _, i}
+    // (21:4) {#each Array(10) as _, i}
     function create_each_block(ctx) {
     	let gamerow;
     	let current;
@@ -2034,7 +2033,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(15:4) {#each Array(10) as _, i}",
+    		source: "(21:4) {#each Array(10) as _, i}",
     		ctx
     	});
 
@@ -2097,12 +2096,12 @@ var app = (function () {
     			}
 
     			attr_dev(nav, "class", "svelte-1aecwpb");
-    			add_location(nav, file$2, 8, 2, 205);
+    			add_location(nav, file$2, 14, 2, 278);
     			attr_dev(section, "class", "svelte-1aecwpb");
-    			add_location(section, file$2, 13, 2, 309);
+    			add_location(section, file$2, 19, 2, 382);
     			attr_dev(div, "id", "gameboard");
     			attr_dev(div, "class", "svelte-1aecwpb");
-    			add_location(div, file$2, 7, 0, 182);
+    			add_location(div, file$2, 13, 0, 255);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2216,6 +2215,12 @@ var app = (function () {
     		currentStep,
     		$currentStep
     	});
+
+    	{
+    		if (currentStep >= 10) {
+    			alert("You lose!");
+    		}
+    	}
 
     	return [$currentStep];
     }

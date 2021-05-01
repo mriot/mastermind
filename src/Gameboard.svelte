@@ -3,6 +3,12 @@
   import Game from "./game";
   import Gamerow from "./Gamerow.svelte";
   import { currentStep } from "./store.js";
+
+  $: {
+    if (currentStep >= 10) {
+      alert("You lose!");
+    }
+  }
 </script>
 
 <div id="gameboard">

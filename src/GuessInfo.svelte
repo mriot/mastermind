@@ -1,8 +1,8 @@
 <script>
   export let result = {};
 
-  let rightGuessPins = result.rightGuesses ?? 0;
-  let rightColorsPins = result.goodColors ?? 0;
+  let rightGuessPins = 0;
+  let rightColorsPins = 0;
 
   $: {
     rightGuessPins = result.rightGuesses ?? 0;
@@ -11,14 +11,14 @@
 </script>
 
 <div id="wrapper">
-  {#each Array(4 - rightColorsPins - rightGuessPins) as _}
-    <div class="pin">d</div>
-  {/each}
   {#each Array(rightColorsPins) as _}
-    <div class="pin right-color">c</div>
+    <div class="pin right-color" />
   {/each}
   {#each Array(rightGuessPins) as _}
-    <div class="pin right-guess">g</div>
+    <div class="pin right-guess" />
+  {/each}
+  {#each Array(4 - rightColorsPins - rightGuessPins) as _}
+    <div class="pin" />
   {/each}
 </div>
 
@@ -41,6 +41,6 @@
   }
 
   .right-guess {
-    background-color: red;
+    background-color: white;
   }
 </style>

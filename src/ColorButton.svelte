@@ -23,7 +23,7 @@
     cursor: pointer;
     width: 50px;
     height: 50px;
-    background-color: #ccc;
+    background-color: #888;
     border-radius: 50%;
     position: relative;
   }

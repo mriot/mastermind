@@ -6,9 +6,9 @@
   export let lineNumber = 0;
   export let active = false;
 
-  let color1 = "green";
-  let color2 = "green";
-  let color3 = "green";
+  let color1;
+  let color2;
+  let color3;
   let color4;
 
   let result;
@@ -25,6 +25,8 @@
 
       if (result.rightGuesses !== 4) {
         currentStep.update(current => current + 1);
+      } else {
+        alert("You win!");
       }
     }
   }
