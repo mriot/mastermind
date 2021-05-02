@@ -1,7 +1,7 @@
 export default class Game {
   constructor() {
     this.CODE = [];
-    this.COLORS = ["red", "green", "blue", "yellow", "purple", "brown"];
+    this.COLORS = ["red", "green", "blue", "yellow", "purple", "pink"];
     console.log("Game created");
   }
 
@@ -14,12 +14,15 @@ export default class Game {
   }
 
   pause() {
-    // pause current game
+    console.log("Game paused");
   }
 
-  end() {
-    // end game -> maybe with status?
-    // win / game over / ...
+  win() {
+    alert("Good Job!");
+  }
+
+  gameover() {
+    alert("Maybe next time :)");
   }
 
   /**

@@ -1,12 +1,11 @@
 <script>
   import Button from "./common/Button.svelte";
-  import Game from "./game";
   import Gamerow from "./Gamerow.svelte";
-  import { currentStep } from "./store.js";
+  import { game, currentStep } from "./store.js";
 
   $: {
     if (currentStep >= 10) {
-      alert("You lose!");
+      $game.gameover();
     }
   }
 </script>
