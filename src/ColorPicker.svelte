@@ -1,12 +1,25 @@
 <script>
+  import { backInOut } from "svelte/easing";
+
+  import { scale, fly } from "svelte/transition";
+
   export let selectedColor;
   const colorsL = ["red", "green", "purple"];
   const colorsR = ["blue", "yellow", "brown"];
 </script>
 
 <div>
-  <div class="left">
-    {#each colorsL as color}
+  <div
+    class="container left"
+    out:scale
+    in:fly={{
+      x: 25,
+      opacity: 0,
+      delay: 0,
+      easing: backInOut
+    }}
+  >
+    {#each colorsL as color, i}
       <div
         class="picker-item"
         style="background-color: {color};"
@@ -14,8 +27,17 @@
       />
     {/each}
   </div>
-  <div class="right">
-    {#each colorsR as color}
+  <div
+    class="container right"
+    out:scale
+    in:fly={{
+      x: -25,
+      opacity: 0,
+      delay: 0,
+      easing: backInOut
+    }}
+  >
+    {#each colorsR as color, i}
       <div
         class="picker-item"
         style="background-color: {color};"
@@ -26,24 +48,36 @@
 </div>
 
 <style>
-  .left {
+  .container {
     position: absolute;
     top: 50%;
-    left: 0;
-    transform: translate(-100%, -50%);
     display: flex;
+    padding: 10px 60%;
+    gap: 5px;
+    /* outline: 1px dashed red; */
+  }
+
+  .left {
+    left: 50%;
+    transform: translate(-100%, -50%);
   }
   .right {
-    position: absolute;
-    top: 50%;
-    right: 0;
+    right: 50%;
     transform: translate(100%, -50%);
-    display: flex;
   }
+
   .picker-item {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     background-color: yellow;
+    z-index: 1;
+    box-shadow: 2px 2px 2px #222;
+    transition: transform 100ms;
+  }
+
+  .picker-item:hover {
+    z-index: 20;
+    transform: scale(1.2);
   }
 </style>
