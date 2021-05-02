@@ -43,6 +43,9 @@ var app = (function () {
     function component_subscribe(component, store, callback) {
         component.$$.on_destroy.push(subscribe(store, callback));
     }
+    function action_destroyer(action_result) {
+        return action_result && is_function(action_result.destroy) ? action_result.destroy : noop;
+    }
 
     const is_client = typeof window !== 'undefined';
     let now = is_client
@@ -741,167 +744,6 @@ var app = (function () {
     	}
     }
 
-    class Game {
-      constructor() {
-        this.CODE = [];
-        this.COLORS = ["red", "green", "blue", "yellow", "purple", "brown"];
-        console.log("Game created");
-      }
-
-      start() {
-        // start a game session
-        for (let i = 0; i < 4; i++) {
-          this.CODE.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
-        }
-        console.log("CODE", this.CODE);
-      }
-
-      pause() {
-        // pause current game
-      }
-
-      end() {
-        // end game -> maybe with status?
-        // win / game over / ...
-      }
-
-      /**
-       * 
-       * @param {ARRAY} guess 
-       */
-      validateGuess(guess) {
-        // // ! DEV ==================
-        // guess = [];
-        // for (let i = 0; i < 4; i++) {
-        //   guess.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
-        // }
-        // // ! DEV ==================
-        
-        console.log("GUESS", guess);
-
-    /* 
-        const test2 = guess.reduce((acc, color, index) => {
-          console.log("\n -> ", color, "- position", index);
-          if (color === this.CODE[index]) {
-            acc[0]++;
-            acc[2].push(index);
-            console.log(`MATCH for ${color} at index ${index}`);
-          } else if (this.CODE.includes(color)) {
-            const i = this.CODE.findIndex((val) => val === color);
-            console.log(`found ${color} at position ${i} in CODE`);
-            
-            if (acc[2].includes(i)) {
-              console.log(`CODE: "${this.CODE[i]}" with index ${i} was already used`);
-              return acc;
-            }
-
-            if (guess[i] !== this.CODE[i]) {
-              console.log(`"${guess[i]}" and "${this.CODE[i]}" IS NO MATCH -> gud color`);
-              acc[1]++;
-              acc[2].push(i);
-            } else {
-              console.log(color, "is a match at", i, "-> skip");
-            }
-          } else {
-            console.log(color, "at position", index, "is not in CODE");
-          }
-
-          return acc;
-        }, [0, 0, []])
-     */
-
-
-        // TODO: tidy up -> Currently in "debug mode" just in case
-        console.groupCollapsed("GUESS VALIDATOR");
-        const validationResult = guess.reduce((acc, color, index) => {
-          console.log("\n -> ", color, "- position", index);
-
-          if (color === this.CODE[index]) {
-            acc.rightGuesses++;
-            acc._processedItems.push(index);
-            console.log(`MATCH for ${color} at index ${index}`);
-          } else if (this.CODE.includes(color)) {
-            const i = this.CODE.findIndex((val) => val === color);
-            console.log(`found ${color} at position ${i} in CODE`);
-            
-            if (acc._processedItems.includes(i)) {
-              console.log(`CODE: "${this.CODE[i]}" with index ${i} was already used`);
-              // remove "_processedItems" as its only used internally
-              if (index + 1 === guess.length) {
-                delete acc._processedItems;
-              }
-              return acc;
-            }
-
-            if (guess[i] !== this.CODE[i]) {
-              console.log(`"${guess[i]}" and "${this.CODE[i]}" IS NO MATCH -> gud color`);
-              acc.goodColors++;
-              acc._processedItems.push(i);
-            } else {
-              console.log(color, "is a match at", i, "-> skip");
-            }
-          } else {
-            console.log(color, "at position", index, "is not in CODE");
-          }
-
-          // remove "_processedItems" as its only used internally
-          if (index + 1 === guess.length) {
-            delete acc._processedItems;
-          }
-
-          return acc;
-        }, { rightGuesses: 0, goodColors: 0, _processedItems: [] });
-        
-        console.log(validationResult);
-        console.groupEnd("GUESS VALIDATOR");
-
-
-
-
-    /* 
-        const test = [];
-        guess.forEach((element, index) => {
-          test.push([this.CODE[index], element])
-        });
-        // console.log("original", test);
-
-        const res = test.reduce((acc, value, index) => {
-          if (value[0] === value[1]) {
-            
-          } else if (this.CODE.includes(value)) {
-
-          }
-
-          return acc;
-        }, [0, 0])
-     */
-        // console.log("result", test, res);
-
-
-
-
-
-
-    /* 
-        const nonMatches = guess.filter((color, index) => color !== this.CODE[index]);
-        const matches = this.CODE.length - nonMatches.length;
-        // console.log(nonMatches);
-        // console.log("matches", matches);
-
-        // const gudColors = this.CODE.filter((color, index) => {
-        //   return nonMatches.includes(color) && color !== guess[index];
-        // });
-
-        const gudColors = nonMatches.filter((color, index) => {
-          return this.CODE.includes(color) && nonMatches[index] !== this.CODE[index];
-        });
-        // console.log("gudColors", gudColors);
-     */
-        
-        return validationResult;
-      }
-    }
-
     /*
     Adapted from https://github.com/mattdesl
     Distributed under MIT License https://github.com/mattdesl/eases/blob/master/LICENSE.md
@@ -965,7 +807,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (22:4) {#each colorsL as color, i}
+    // (31:4) {#each colorsL as color, i}
     function create_each_block_1$1(ctx) {
     	let div;
     	let mounted;
@@ -978,9 +820,9 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			div = element("div");
-    			attr_dev(div, "class", "picker-item svelte-1vss2zv");
-    			set_style(div, "background-color", /*color*/ ctx[5]);
-    			add_location(div, file$6, 22, 6, 426);
+    			attr_dev(div, "class", "picker-item svelte-12psw1w");
+    			set_style(div, "background-color", /*color*/ ctx[5].value);
+    			add_location(div, file$6, 31, 6, 626);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -1004,14 +846,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1$1.name,
     		type: "each",
-    		source: "(22:4) {#each colorsL as color, i}",
+    		source: "(31:4) {#each colorsL as color, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (40:4) {#each colorsR as color, i}
+    // (49:4) {#each colorsR as color, i}
     function create_each_block$2(ctx) {
     	let div;
     	let mounted;
@@ -1024,9 +866,9 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			div = element("div");
-    			attr_dev(div, "class", "picker-item svelte-1vss2zv");
-    			set_style(div, "background-color", /*color*/ ctx[5]);
-    			add_location(div, file$6, 40, 6, 765);
+    			attr_dev(div, "class", "picker-item svelte-12psw1w");
+    			set_style(div, "background-color", /*color*/ ctx[5].value);
+    			add_location(div, file$6, 49, 6, 971);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -1050,7 +892,7 @@ var app = (function () {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(40:4) {#each colorsR as color, i}",
+    		source: "(49:4) {#each colorsR as color, i}",
     		ctx
     	});
 
@@ -1099,11 +941,11 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			attr_dev(div0, "class", "container left svelte-1vss2zv");
-    			add_location(div0, file$6, 11, 2, 246);
-    			attr_dev(div1, "class", "container right svelte-1vss2zv");
-    			add_location(div1, file$6, 29, 2, 583);
-    			add_location(div2, file$6, 10, 0, 238);
+    			attr_dev(div0, "class", "container left svelte-12psw1w");
+    			add_location(div0, file$6, 20, 2, 446);
+    			attr_dev(div1, "class", "container right svelte-12psw1w");
+    			add_location(div1, file$6, 38, 2, 789);
+    			add_location(div2, file$6, 19, 0, 438);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1238,8 +1080,19 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ColorPicker", slots, []);
     	let { selectedColor } = $$props;
-    	const colorsL = ["red", "green", "purple"];
-    	const colorsR = ["blue", "yellow", "brown"];
+
+    	const colorsL = [
+    		{ name: "red", value: "#ff0000" },
+    		{ name: "green", value: "#00ff34" },
+    		{ name: "purple", value: "#7400ff" }
+    	];
+
+    	const colorsR = [
+    		{ name: "blue", value: "#00dbff" },
+    		{ name: "yellow", value: "#ffd700" },
+    		{ name: "pink", value: "#ff00d7" }
+    	];
+
     	const writable_props = ["selectedColor"];
 
     	Object.keys($$props).forEach(key => {
@@ -1302,10 +1155,28 @@ var app = (function () {
     	}
     }
 
+    /** Dispatch event on click outside of node */
+    function clickOutside(node) {
+      
+      const handleClick = event => {
+        if (node && !node.contains(event.target) && !event.defaultPrevented) {
+          node.dispatchEvent(new CustomEvent("clickoutside", node));
+        }
+      };
+
+    	document.addEventListener("click", handleClick, true);
+      
+      return {
+        destroy() {
+          document.removeEventListener("click", handleClick, true);
+        }
+    	}
+    }
+
     /* src/ColorButton.svelte generated by Svelte v3.37.0 */
     const file$5 = "src/ColorButton.svelte";
 
-    // (16:2) {#if pickerOpen && active}
+    // (18:2) {#if pickerOpen && active}
     function create_if_block(ctx) {
     	let colorpicker;
     	let updating_selectedColor;
@@ -1361,7 +1232,7 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(16:2) {#if pickerOpen && active}",
+    		source: "(18:2) {#if pickerOpen && active}",
     		ctx
     	});
 
@@ -1373,16 +1244,16 @@ var app = (function () {
     	let current;
     	let mounted;
     	let dispose;
-    	let if_block = /*pickerOpen*/ ctx[2] && /*active*/ ctx[1] && create_if_block(ctx);
+    	let if_block = /*pickerOpen*/ ctx[1] && /*active*/ ctx[2] && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
     			div = element("div");
     			if (if_block) if_block.c();
     			attr_dev(div, "class", "color-button svelte-12vzuqx");
-    			set_style(div, "background-color", /*selectedColor*/ ctx[0]);
-    			toggle_class(div, "inactive", !/*active*/ ctx[1]);
-    			add_location(div, file$5, 8, 0, 159);
+    			set_style(div, "background-color", /*selectedColor*/ ctx[0].value);
+    			toggle_class(div, "inactive", !/*active*/ ctx[2]);
+    			add_location(div, file$5, 9, 0, 223);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -1394,15 +1265,16 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(div, "mouseenter", /*mouseenter_handler*/ ctx[4], false, false, false),
-    					listen_dev(div, "mouseleave", /*mouseleave_handler*/ ctx[5], false, false, false)
+    					action_destroyer(clickOutside.call(null, div)),
+    					listen_dev(div, "click", /*click_handler*/ ctx[4], false, false, false),
+    					listen_dev(div, "clickoutside", /*clickoutside_handler*/ ctx[5], false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if (/*pickerOpen*/ ctx[2] && /*active*/ ctx[1]) {
+    			if (/*pickerOpen*/ ctx[1] && /*active*/ ctx[2]) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
 
@@ -1426,11 +1298,11 @@ var app = (function () {
     			}
 
     			if (!current || dirty & /*selectedColor*/ 1) {
-    				set_style(div, "background-color", /*selectedColor*/ ctx[0]);
+    				set_style(div, "background-color", /*selectedColor*/ ctx[0].value);
     			}
 
-    			if (dirty & /*active*/ 2) {
-    				toggle_class(div, "inactive", !/*active*/ ctx[1]);
+    			if (dirty & /*active*/ 4) {
+    				toggle_class(div, "inactive", !/*active*/ ctx[2]);
     			}
     		},
     		i: function intro(local) {
@@ -1466,8 +1338,8 @@ var app = (function () {
     	validate_slots("ColorButton", slots, []);
     	let { active = false } = $$props;
     	let { selectedColor = "" } = $$props;
-    	let pickerOpen = false;
-    	const writable_props = ["active", "selectedColor"];
+    	let { pickerOpen = false } = $$props;
+    	const writable_props = ["active", "selectedColor", "pickerOpen"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ColorButton> was created with unknown prop '${key}'`);
@@ -1478,25 +1350,27 @@ var app = (function () {
     		$$invalidate(0, selectedColor);
     	}
 
-    	const mouseenter_handler = () => $$invalidate(2, pickerOpen = true);
-    	const mouseleave_handler = () => $$invalidate(2, pickerOpen = false);
+    	const click_handler = () => $$invalidate(1, pickerOpen = !pickerOpen);
+    	const clickoutside_handler = () => $$invalidate(1, pickerOpen = false);
 
     	$$self.$$set = $$props => {
-    		if ("active" in $$props) $$invalidate(1, active = $$props.active);
+    		if ("active" in $$props) $$invalidate(2, active = $$props.active);
     		if ("selectedColor" in $$props) $$invalidate(0, selectedColor = $$props.selectedColor);
+    		if ("pickerOpen" in $$props) $$invalidate(1, pickerOpen = $$props.pickerOpen);
     	};
 
     	$$self.$capture_state = () => ({
     		ColorPicker,
+    		clickOutside,
     		active,
     		selectedColor,
     		pickerOpen
     	});
 
     	$$self.$inject_state = $$props => {
-    		if ("active" in $$props) $$invalidate(1, active = $$props.active);
+    		if ("active" in $$props) $$invalidate(2, active = $$props.active);
     		if ("selectedColor" in $$props) $$invalidate(0, selectedColor = $$props.selectedColor);
-    		if ("pickerOpen" in $$props) $$invalidate(2, pickerOpen = $$props.pickerOpen);
+    		if ("pickerOpen" in $$props) $$invalidate(1, pickerOpen = $$props.pickerOpen);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -1505,18 +1379,23 @@ var app = (function () {
 
     	return [
     		selectedColor,
-    		active,
     		pickerOpen,
+    		active,
     		colorpicker_selectedColor_binding,
-    		mouseenter_handler,
-    		mouseleave_handler
+    		click_handler,
+    		clickoutside_handler
     	];
     }
 
     class ColorButton extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$5, create_fragment$5, safe_not_equal, { active: 1, selectedColor: 0 });
+
+    		init(this, options, instance$5, create_fragment$5, safe_not_equal, {
+    			active: 2,
+    			selectedColor: 0,
+    			pickerOpen: 1
+    		});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -1539,6 +1418,14 @@ var app = (function () {
     	}
 
     	set selectedColor(value) {
+    		throw new Error("<ColorButton>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	get pickerOpen() {
+    		throw new Error("<ColorButton>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
+    	}
+
+    	set pickerOpen(value) {
     		throw new Error("<ColorButton>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
     }
@@ -1931,6 +1818,170 @@ var app = (function () {
         return { set, update, subscribe };
     }
 
+    class Game {
+      constructor() {
+        this.CODE = [];
+        this.COLORS = ["red", "green", "blue", "yellow", "purple", "pink"];
+        console.log("Game created");
+      }
+
+      start() {
+        // start a game session
+        for (let i = 0; i < 4; i++) {
+          this.CODE.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
+        }
+        console.log("CODE", this.CODE);
+      }
+
+      pause() {
+        console.log("Game paused");
+      }
+
+      win() {
+        alert("Good Job!");
+      }
+
+      gameover() {
+        alert("Maybe next time :)");
+      }
+
+      /**
+       * 
+       * @param {ARRAY} guess 
+       */
+      validateGuess(guess) {
+        // // ! DEV ==================
+        // guess = [];
+        // for (let i = 0; i < 4; i++) {
+        //   guess.push(this.COLORS[Math.floor(Math.random() * this.COLORS.length)]);
+        // }
+        // // ! DEV ==================
+        
+        console.log("GUESS", guess);
+
+    /* 
+        const test2 = guess.reduce((acc, color, index) => {
+          console.log("\n -> ", color, "- position", index);
+          if (color === this.CODE[index]) {
+            acc[0]++;
+            acc[2].push(index);
+            console.log(`MATCH for ${color} at index ${index}`);
+          } else if (this.CODE.includes(color)) {
+            const i = this.CODE.findIndex((val) => val === color);
+            console.log(`found ${color} at position ${i} in CODE`);
+            
+            if (acc[2].includes(i)) {
+              console.log(`CODE: "${this.CODE[i]}" with index ${i} was already used`);
+              return acc;
+            }
+
+            if (guess[i] !== this.CODE[i]) {
+              console.log(`"${guess[i]}" and "${this.CODE[i]}" IS NO MATCH -> gud color`);
+              acc[1]++;
+              acc[2].push(i);
+            } else {
+              console.log(color, "is a match at", i, "-> skip");
+            }
+          } else {
+            console.log(color, "at position", index, "is not in CODE");
+          }
+
+          return acc;
+        }, [0, 0, []])
+     */
+
+
+        // TODO: tidy up -> Currently in "debug mode" just in case
+        console.groupCollapsed("GUESS VALIDATOR");
+        const validationResult = guess.reduce((acc, color, index) => {
+          console.log("\n -> ", color, "- position", index);
+
+          if (color === this.CODE[index]) {
+            acc.rightGuesses++;
+            acc._processedItems.push(index);
+            console.log(`MATCH for ${color} at index ${index}`);
+          } else if (this.CODE.includes(color)) {
+            const i = this.CODE.findIndex((val) => val === color);
+            console.log(`found ${color} at position ${i} in CODE`);
+            
+            if (acc._processedItems.includes(i)) {
+              console.log(`CODE: "${this.CODE[i]}" with index ${i} was already used`);
+              // remove "_processedItems" as its only used internally
+              if (index + 1 === guess.length) {
+                delete acc._processedItems;
+              }
+              return acc;
+            }
+
+            if (guess[i] !== this.CODE[i]) {
+              console.log(`"${guess[i]}" and "${this.CODE[i]}" IS NO MATCH -> gud color`);
+              acc.goodColors++;
+              acc._processedItems.push(i);
+            } else {
+              console.log(color, "is a match at", i, "-> skip");
+            }
+          } else {
+            console.log(color, "at position", index, "is not in CODE");
+          }
+
+          // remove "_processedItems" as its only used internally
+          if (index + 1 === guess.length) {
+            delete acc._processedItems;
+          }
+
+          return acc;
+        }, { rightGuesses: 0, goodColors: 0, _processedItems: [] });
+        
+        console.log(validationResult);
+        console.groupEnd("GUESS VALIDATOR");
+
+
+
+
+    /* 
+        const test = [];
+        guess.forEach((element, index) => {
+          test.push([this.CODE[index], element])
+        });
+        // console.log("original", test);
+
+        const res = test.reduce((acc, value, index) => {
+          if (value[0] === value[1]) {
+            
+          } else if (this.CODE.includes(value)) {
+
+          }
+
+          return acc;
+        }, [0, 0])
+     */
+        // console.log("result", test, res);
+
+
+
+
+
+
+    /* 
+        const nonMatches = guess.filter((color, index) => color !== this.CODE[index]);
+        const matches = this.CODE.length - nonMatches.length;
+        // console.log(nonMatches);
+        // console.log("matches", matches);
+
+        // const gudColors = this.CODE.filter((color, index) => {
+        //   return nonMatches.includes(color) && color !== guess[index];
+        // });
+
+        const gudColors = nonMatches.filter((color, index) => {
+          return this.CODE.includes(color) && nonMatches[index] !== this.CODE[index];
+        });
+        // console.log("gudColors", gudColors);
+     */
+        
+        return validationResult;
+      }
+    }
+
     const currentStep = writable(0);
 
     const game = writable(new Game());
@@ -2052,14 +2103,14 @@ var app = (function () {
     			t5 = space();
     			aside1 = element("aside");
     			create_component(guessinfo.$$.fragment);
-    			add_location(aside0, file$3, 35, 2, 742);
+    			add_location(aside0, file$3, 40, 2, 808);
     			attr_dev(main, "class", "svelte-5r209y");
-    			add_location(main, file$3, 36, 2, 772);
-    			add_location(aside1, file$3, 42, 2, 1019);
+    			add_location(main, file$3, 41, 2, 838);
+    			add_location(aside1, file$3, 47, 2, 1085);
     			attr_dev(div, "id", "gamerow");
     			attr_dev(div, "class", "svelte-5r209y");
     			toggle_class(div, "active", /*active*/ ctx[1]);
-    			add_location(div, file$3, 34, 0, 708);
+    			add_location(div, file$3, 39, 0, 774);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2247,17 +2298,18 @@ var app = (function () {
     		if ($$self.$$.dirty & /*color1, color2, color3, color4, $game, result*/ 252) {
     			{
     				if (color1 && color2 && color3 && color4) {
-    					console.log(color1);
-    					console.log(color2);
-    					console.log(color3);
-    					console.log(color4);
-    					$$invalidate(6, result = $game.validateGuess([color1, color2, color3, color4]));
+    					// console.log(color1);
+    					// console.log(color2);
+    					// console.log(color3);
+    					// console.log(color4);
+    					$$invalidate(6, result = $game.validateGuess([color1.name, color2.name, color3.name, color4.name]));
+
     					console.log(result);
 
     					if (result.rightGuesses !== 4) {
     						currentStep.update(current => current + 1);
     					} else {
-    						alert("You win!");
+    						$game.win();
     					}
     				}
     			}
@@ -2315,20 +2367,20 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[1] = list[i];
-    	child_ctx[3] = i;
+    	child_ctx[2] = list[i];
+    	child_ctx[4] = i;
     	return child_ctx;
     }
 
-    // (21:4) {#each Array(10) as _, i}
+    // (20:4) {#each Array(10) as _, i}
     function create_each_block(ctx) {
     	let gamerow;
     	let current;
 
     	gamerow = new Gamerow({
     			props: {
-    				lineNumber: /*i*/ ctx[3] + 1,
-    				active: /*$currentStep*/ ctx[0] === /*i*/ ctx[3]
+    				lineNumber: /*i*/ ctx[4] + 1,
+    				active: /*$currentStep*/ ctx[0] === /*i*/ ctx[4]
     			},
     			$$inline: true
     		});
@@ -2343,7 +2395,7 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const gamerow_changes = {};
-    			if (dirty & /*$currentStep*/ 1) gamerow_changes.active = /*$currentStep*/ ctx[0] === /*i*/ ctx[3];
+    			if (dirty & /*$currentStep*/ 1) gamerow_changes.active = /*$currentStep*/ ctx[0] === /*i*/ ctx[4];
     			gamerow.$set(gamerow_changes);
     		},
     		i: function intro(local) {
@@ -2364,7 +2416,7 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(21:4) {#each Array(10) as _, i}",
+    		source: "(20:4) {#each Array(10) as _, i}",
     		ctx
     	});
 
@@ -2427,12 +2479,12 @@ var app = (function () {
     			}
 
     			attr_dev(nav, "class", "svelte-1aecwpb");
-    			add_location(nav, file$2, 14, 2, 278);
+    			add_location(nav, file$2, 13, 2, 253);
     			attr_dev(section, "class", "svelte-1aecwpb");
-    			add_location(section, file$2, 19, 2, 382);
+    			add_location(section, file$2, 18, 2, 357);
     			attr_dev(div, "id", "gameboard");
     			attr_dev(div, "class", "svelte-1aecwpb");
-    			add_location(div, file$2, 13, 0, 255);
+    			add_location(div, file$2, 12, 0, 230);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -2528,7 +2580,10 @@ var app = (function () {
     }
 
     function instance$2($$self, $$props, $$invalidate) {
+    	let $game;
     	let $currentStep;
+    	validate_store(game, "game");
+    	component_subscribe($$self, game, $$value => $$invalidate(1, $game = $$value));
     	validate_store(currentStep, "currentStep");
     	component_subscribe($$self, currentStep, $$value => $$invalidate(0, $currentStep = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
@@ -2541,19 +2596,24 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		Button,
-    		Game,
     		Gamerow,
+    		game,
     		currentStep,
+    		$game,
     		$currentStep
     	});
 
-    	{
-    		if (currentStep >= 10) {
-    			alert("You lose!");
+    	$$self.$$.update = () => {
+    		if ($$self.$$.dirty & /*$game*/ 2) {
+    			{
+    				if (currentStep >= 10) {
+    					$game.gameover();
+    				}
+    			}
     		}
-    	}
+    	};
 
-    	return [$currentStep];
+    	return [$currentStep, $game];
     }
 
     class Gameboard extends SvelteComponentDev {
