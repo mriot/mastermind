@@ -15,18 +15,23 @@
 
   $: {
     if (color1 && color2 && color3 && color4) {
-      console.log(color1);
-      console.log(color2);
-      console.log(color3);
-      console.log(color4);
+      // console.log(color1);
+      // console.log(color2);
+      // console.log(color3);
+      // console.log(color4);
 
-      result = $game.validateGuess([color1, color2, color3, color4]);
+      result = $game.validateGuess([
+        color1.name,
+        color2.name,
+        color3.name,
+        color4.name
+      ]);
       console.log(result);
 
       if (result.rightGuesses !== 4) {
         currentStep.update(current => current + 1);
       } else {
-        alert("You win!");
+        $game.win();
       }
     }
   }

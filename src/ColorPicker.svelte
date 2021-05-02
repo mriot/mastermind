@@ -4,8 +4,17 @@
   import { scale, fly } from "svelte/transition";
 
   export let selectedColor;
-  const colorsL = ["red", "green", "purple"];
-  const colorsR = ["blue", "yellow", "brown"];
+
+  const colorsL = [
+    { name: "red", value: "#ff0000" },
+    { name: "green", value: "#00ff34" },
+    { name: "purple", value: "#7400ff" }
+  ];
+  const colorsR = [
+    { name: "blue", value: "#00dbff" },
+    { name: "yellow", value: "#ffd700" },
+    { name: "pink", value: "#ff00d7" }
+  ];
 </script>
 
 <div>
@@ -22,7 +31,7 @@
     {#each colorsL as color, i}
       <div
         class="picker-item"
-        style="background-color: {color};"
+        style="background-color: {color.value};"
         on:click={() => (selectedColor = color)}
       />
     {/each}
@@ -40,7 +49,7 @@
     {#each colorsR as color, i}
       <div
         class="picker-item"
-        style="background-color: {color};"
+        style="background-color: {color.value};"
         on:click={() => (selectedColor = color)}
       />
     {/each}
@@ -70,7 +79,7 @@
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: yellow;
+    background-color: grey;
     z-index: 1;
     box-shadow: 2px 2px 2px #222;
     transition: transform 100ms;

@@ -10,7 +10,7 @@
 <div
   class="color-button"
   class:inactive={!active}
-  style="background-color: {selectedColor}"
+  style="background-color: {selectedColor.value}"
   use:clickOutside
   on:click={() => (pickerOpen = !pickerOpen)}
   on:clickoutside={() => (pickerOpen = false)}
