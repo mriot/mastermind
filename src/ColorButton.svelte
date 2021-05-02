@@ -1,17 +1,19 @@
 <script>
   import ColorPicker from "./ColorPicker.svelte";
+  import { clickOutside } from "./util/clickOutside.js";
 
   export let active = false;
   export let selectedColor = "";
-  let pickerOpen = false;
+  export let pickerOpen = false;
 </script>
 
 <div
   class="color-button"
   class:inactive={!active}
   style="background-color: {selectedColor}"
-  on:mouseenter={() => (pickerOpen = true)}
-  on:mouseleave={() => (pickerOpen = false)}
+  use:clickOutside
+  on:click={() => (pickerOpen = !pickerOpen)}
+  on:clickoutside={() => (pickerOpen = false)}
 >
   {#if pickerOpen && active}
     <ColorPicker bind:selectedColor />
